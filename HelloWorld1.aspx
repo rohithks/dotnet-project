@@ -1,35 +1,13 @@
-
-<!-- directives -->
-<% @Page Language="C#" %>
-
-<!-- code section -->
-<script runat="server">
-
-   private void convertoupper(object sender, EventArgs e)
-   {
-      string str = mytext.Value;
-      changed_text.InnerHtml = str.ToUpper();
-   }
-</script>
-
-<!-- Layout -->
+<%@ Page Language="VB" %>
 <html>
-   <head> 
-      <title> Change to Upper Case </title> 
-   </head>
-   
    <body>
-      <h3> Conversion to Upper Case </h3>
-      
-      <form runat="server">
-         <input runat="server" id="mytext" type="text" />
-         <input runat="server" id="button1" type="submit" value="Enter..." OnServerClick="convertoupper"/>
-         
-         <hr />
-         <h3> Results: </h3>
-         <span runat="server" id="changed_text" />
-      </form>
-      
+
+      <h1>Hello World</h1>
+      <h1>ASP.NET Style</h1>
+      <h2>Using VB .NET</h2>
+
+      <br/>
+      <h2>The date and time is <% =DateTime.Now(  ) %>.</h2>
+
    </body>
-   
-</html
+</html>
