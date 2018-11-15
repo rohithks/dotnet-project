@@ -1,20 +1,7 @@
-using System;
-using Microsoft.AspNetCore.Hosting;
-
-namespace CoreApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-
-            var host = new WebHostBuilder()
-            .UseKestrel()
-            .UseStartup<Startup>()
-            .Build();
-
-            host.Run();
-        }
-    }
-}
+// CS5001.cs  
+// CS5001 expected  
+public class a  
+{  
+   // Uncomment the following line to resolve.  
+    static void Main() {}  
+} 
