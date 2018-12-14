@@ -1,4 +1,4 @@
 
 #Application  details
 
-app=HelloWorld
+APP_NAME=HelloWorld
