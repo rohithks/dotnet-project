@@ -10,12 +10,12 @@ pipeline {
    }
   }
   
-  stage('Load properties') {
+  stage('Load Properties') {
   steps {
     load "helloworldjenkins.properties"
   }
   }
-   stage('test3') {
+   stage('Restore Packages') {
    steps {
      bat "echo ${APP_NAME}"
       script {
@@ -26,23 +26,34 @@ pipeline {
             echo 'No Packages for helloworld'
      }   
    }  
- }
+  }
  }	
   stage ('Build & SonarAnalysis'){
    steps {
-   withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
-    bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+      script {
+            if ( "${APP_NAME}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
+                 withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
 				
-    bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
+               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
 				
-    bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}"
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}"
+             } else {
+               echo 'No Build and Sonaranalysis'
       }
     }
+   }
    }
    
   stage('Pack') {
    steps {
-   bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+      script {
+          if ("${NUPKG_PACK}" == 'YES') {
+              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+	  } else {
+              echo 'Not packing anything'
+    }
+   }
    }
   }
   
@@ -50,7 +61,8 @@ pipeline {
    steps {
    
     bat 'echo "Jfrog Artifactory upload"'
-              script { 
+        script { 
+	    if ("${ARTIFACT_UPLOAD}" == 'YES') {
                bat 'echo "Jfrog Artifactory upload1"'
 	       def buildVersion = currentBuild.number
                def server = Artifactory.server 'Artifactory'
@@ -64,10 +76,12 @@ pipeline {
                   bat 'echo "Jfrog Artifactory upload2"' 
 		  server.upload(uploadSpec) 
                   bat 'echo "Jfrog Artifactory upload3"'
-		 }
-		 }
-		 }
-		     
+	       } else {
+                  echo 'Not uploading to Artifactory'
+	 }
+      }
+    }
+  }    
 		     
 	stage('Environment Provisioning') {
         agent {node {label 'AnsibleSlave1'}}
