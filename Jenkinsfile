@@ -31,7 +31,7 @@ pipeline {
   stage ('Build & SonarAnalysis'){
    steps {
       script {
-            if ( "${APP_NAME}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
+            if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
                  withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
                bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
 				
@@ -41,9 +41,9 @@ pipeline {
                
 	      } else {
                echo 'No Build and Sonaranalysis'
+        }
       }
     }
-   }
    }
   
    
