@@ -21,9 +21,8 @@ pipeline {
    stage('test3'){
    steps {
      bat "echo ${APP_NAME}"
-	                       
-        }  
-	 }
+   }  
+ }
 	
   stage ('Build & SonarAnalysis'){
    steps {
