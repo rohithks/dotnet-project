@@ -7,3 +7,4 @@ deploy_remedy_group=
 qa_remedy_group=
 pushToProd_remedy_group=
 devops_remedy_group=
+app=HelloWorld
