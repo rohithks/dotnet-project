@@ -19,7 +19,7 @@ pipeline {
    steps {
      bat "echo ${APP_NAME}"
       script {
-            if ( ${APP_NAME} == 'HelloWorld') {
+            if ("${APP_NAME}" == 'HelloWorld') {
             echo 'I only execute on the master branch'
              } else {
             echo 'I execute elsewhere'
