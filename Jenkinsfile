@@ -6,8 +6,7 @@ pipeline {
  stages {
   stage('Checkout') {
    steps {
-     bat 'echo "${APP_NAME}"'
-     checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
+    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
    }
   }
   
