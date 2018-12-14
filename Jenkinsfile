@@ -15,7 +15,7 @@ pipeline {
     load "helloworldjenkins.properties"
   }
   }
-   stage('test3'){
+   stage('test3') {
    steps {
      bat "echo ${APP_NAME}"
       script {
@@ -26,7 +26,7 @@ pipeline {
      }   
    }  
  }
-	
+ }	
   stage ('Build & SonarAnalysis'){
    steps {
    withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
