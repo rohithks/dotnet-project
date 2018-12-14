@@ -21,8 +21,15 @@ pipeline {
    stage('test3'){
    steps {
      bat "echo ${APP_NAME}"
+	  if (${APP_NAME} == 'Helloworld') {
+                bat echo ' only execute on Helloworld project'
+                bat "\"${env.Nuget_Path}\" restore 1-hello-world"
+            } else {
+                echo 'I execute elsewhere'
+            }                        
+        }  
 	 }
-	}
+	
   stage ('Build & SonarAnalysis'){
    steps {
    withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
