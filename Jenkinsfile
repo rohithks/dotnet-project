@@ -20,9 +20,10 @@ pipeline {
      bat "echo ${APP_NAME}"
       script {
             if ("${APP_NAME}" == 'HelloWorld') {
-            echo 'I only execute on the master branch'
+            echo 'Restoring the packages for Helloworld'
+            bat "\"${env.Nuget_Path}\" restore 1-hello-world"
              } else {
-            echo 'I execute elsewhere'
+            echo 'No Packages for helloworld'
      }   
    }  
  }
