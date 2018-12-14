@@ -90,7 +90,7 @@ pipeline {
         steps {
          sh """
          echo " Provisioning the environment with Terraform Script"
-	 cd /root/vm-simple-linux-managed-disk
+	 cd /etc/vm-simple-linux-managed-disk
 	 terraform plan -lock=false
 	 terraform apply 
       """
