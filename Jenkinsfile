@@ -12,14 +12,18 @@ pipeline {
   
   stage('Load properties') {
   steps {
-   
-     load "helloworldjenkins.properties"
+    load "helloworldjenkins.properties"
   }
   }
-  
    stage('test3'){
    steps {
      bat "echo ${APP_NAME}"
+      script {
+            if ( ${APP_NAME} == 'HelloWorld') {
+            echo 'I only execute on the master branch'
+             } else {
+            echo 'I execute elsewhere'
+     }   
    }  
  }
 	
