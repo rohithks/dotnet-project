@@ -37,7 +37,7 @@ pipeline {
 				
                bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
 				
-               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}"
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
                
 	      } else {
                echo 'No Build and Sonaranalysis'
@@ -45,7 +45,7 @@ pipeline {
     }
    }
    }
-  }
+  
    
   stage('Pack') {
    steps {
