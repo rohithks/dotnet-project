@@ -16,7 +16,6 @@
    
     bat 'echo "Jfrog Artifactory upload"'
         script { 
-	    if ("${ARTIFACT_UPLOAD}" == 'YES') {
                bat 'echo "Jfrog Artifactory upload1"'
 	       def buildVersion = currentBuild.number
                def server = Artifactory.server 'Artifactory'
@@ -29,9 +28,7 @@
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
 		  server.upload(uploadSpec) 
-                  bat 'echo "Jfrog Artifactory upload3"'
-	       } else {
-                  echo 'Not uploading to Artifactory'
+                  bat 'echo "Jfrog Artifactory upload3" 
 	 }
       }
     }
