@@ -28,8 +28,8 @@
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
 		  server.upload(uploadSpec) 
-                  bat 'echo "Jfrog Artifactory upload3" 
-	 }
+                  bat 'echo "Jfrog Artifactory upload3"'
+	 
 	}
       }
     }
