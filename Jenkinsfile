@@ -19,7 +19,7 @@ pipeline {
    steps {
      bat "echo ${APP_NAME}"
       script {
-            if ("${APP_NAME}" == HelloWorld) {
+            if ("${APP_NAME}" == 'HelloWorld') {
             echo 'Restoring the packages for Helloworld'
             bat "\"${env.Nuget_Path}\" restore 1-hello-world"
              } else {
