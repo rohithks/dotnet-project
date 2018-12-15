@@ -11,7 +11,7 @@ pipeline {
   }
   stage('Artifactory Upload') {
    steps {
-   archiveArtifacts 'C:\\Program Files (x86)\\Jenkins\\workspace\\DOTNET_PROJECT/*.nupkg'
+   archiveArtifacts "${env.Nupkg_Path}/*.nupkg "
    }
   }
   }
