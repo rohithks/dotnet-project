@@ -1,3 +1,16 @@
+  pipeline {
+ agent {node {label 'master'}}
+ environment {
+  dotnet = "${tool 'MSBuild15_Path'}"
+ }
+ stages {
+  stage('Checkout') {
+   steps {
+    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
+   }
+  }
+  
+  
   stage('Artifactory Upload') {
    steps {
    
