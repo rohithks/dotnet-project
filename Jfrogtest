@@ -11,6 +11,7 @@ pipeline {
   }
   stage('Artifactory Upload') {
    steps {
+   bat "echo ${env.Nupkg_Path}"
    archiveArtifacts "${env.Nupkg_Path}/*.nupkg "
    }
   }
