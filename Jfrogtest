@@ -12,7 +12,8 @@ pipeline {
   stage('Artifactory Upload') {
    steps {
    bat "echo ${env.Nupkg_Path}"
-   archiveArtifacts "${env.Nupkg_Path}/1-hello-world.1.0.0.nupkg"
+   //archiveArtifacts "${env.Nupkg_Path}/1-hello-world.1.0.0.nupkg"
+    bat nuget push 1-hello-world.1.0.0.nupkg -Source https://maheshcicd.jfrog.io/maheshcicd/api/nuget/First/
    }
   }
   }
