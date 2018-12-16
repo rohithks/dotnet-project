@@ -23,7 +23,7 @@
                 def uploadSpec = """{
                     "files": [{
                        "pattern": "${env.Nupkg_Path}/*.nupkg ",
-                       "target": "test_nuget-cache/"
+                       "target": "example-repo-local/"
                     }]
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
