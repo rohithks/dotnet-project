@@ -18,12 +18,12 @@
         script { 
                bat 'echo "Jfrog Artifactory upload1"'
 	       def buildVersion = currentBuild.number
-               def server = Artifactory.server 'Artifactory'
+               def server = Artifactory.server 'Jfrog_Artifactory'
                  
                 def uploadSpec = """{
                     "files": [{
                        "pattern": "${env.Nupkg_Path}/*.nupkg ",
-                       "target": "First/"
+                       "target": "test_nuget-cache/"
                     }]
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
