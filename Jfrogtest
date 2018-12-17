@@ -44,9 +44,7 @@
     }
   stage('Update JIRA Ticket') {
   steps {
-  //jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
-   
-  jiraIssueSelector(issueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'])
+          jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
      }
      }
     }
