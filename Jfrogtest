@@ -48,7 +48,6 @@
    step([$class: 'hudson.plugins.jira.JiraIssueUpdater', 
     issueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'],
      }
-     }
    }
    }
   }
