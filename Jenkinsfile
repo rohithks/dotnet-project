@@ -28,8 +28,7 @@ pipeline {
    }  
   }
  }	
-  
-	 stage ('Build & SonarAnalysis'){
+   stage ('Build & SonarAnalysis'){
    steps {
       script {
             if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
@@ -60,35 +59,64 @@ pipeline {
    }
   }
   
-  stage('Artifactory Upload') {
+   stage('Artifactory Upload') {
    steps {
-   
-    bat 'echo "Jfrog Artifactory upload"'
-        script { 
-	    if ("${ARTIFACT_UPLOAD}" == 'YES') {
-               bat 'echo "Jfrog Artifactory upload1"'
-	       def buildVersion = currentBuild.number
-               def server = Artifactory.server 'Jfrog_Artifactory'
-                 
+      bat "echo ${env.Nupkg_Path}"
+      script { 
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          buildInfo.name = "${BUILD_INFO_NAME}"
+          buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
                 def uploadSpec = """{
-                    "files": [{
-                       "pattern": "${env.Nupkg_Path}/*.nupkg ",
-                       "target": "First/"
-                    }]
+                    "files": [
+		    {
+                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkg",
+                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
+                    }
+		    ]
                  }"""
-                  bat 'echo "Jfrog Artifactory upload2"' 
-		  server.upload(uploadSpec) 
-                  bat 'echo "Jfrog Artifactory upload3"'
-	       } else {
-                  echo 'Not uploading to Artifactory'
+                  server.upload(uploadSpec) 
+		  //def buildInfo1 = server.download downloadSpec
+                  def buildInfo2 = server.upload uploadSpec
+                  //buildInfo1.append buildInfo2
+                  server.publishBuildInfo buildInfo2
+                  
 	 }
       }
     }
-  }    
+  }
+ stage('Artifactory Download') {
+   steps {
+      bat "echo ${env.Nupkg_Path}"
+      script { 
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          buildInfo.name = "${BUILD_INFO_NAME}"
+          buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
+                def uploadSpec = """{
+                    "files": [
+		    {
+                       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
+                       "target": "${env.Nupkg_Path}/"
+                    }
+		    ]
+                 }"""
+                  server.download(downloadSpec) 
 		     
-	stage('Environment Provisioning') {
-        agent {node {label 'AnsibleSlave1'}}
-        steps {
+	 }
+      }
+    }
+  }
+	
+	
+  
+    stage('Environment Provisioning') {
+       agent {node {label 'AnsibleSlave1'}}
+       steps {
          sh """
          echo " Provisioning the environment with Terraform Script"
 	 cd /etc/vm-simple-linux-managed-disk
@@ -96,8 +124,7 @@ pipeline {
 	  """
   }                    
  } 
-		 
-		 
+		 		 
      stage('Deploy') {
      agent {node {label 'AnsibleSlave1'}}
      steps {
