@@ -44,7 +44,9 @@
     }
   stage('Update JIRA Ticket') {
   steps {
+   script { 
     jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])  
+     }
      }
    }
    }
