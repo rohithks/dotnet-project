@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  tasks:
+    - shell: echo "My first Ansible playbook returned Hello World!!"
