@@ -87,8 +87,7 @@ pipeline {
       }
     }
   }
-
-   stage('Artifactory Download') {
+  stage('Artifactory Upload') {
    steps {
       bat "echo ${env.Nupkg_Path}"
       script { 
@@ -101,20 +100,21 @@ pipeline {
                 def uploadSpec = """{
                     "files": [
 		    {
-		    
-		       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
-                       "target": "${env.Nupkg_Path}/"
-                       
+                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkg",
+                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
+                    }
 		    ]
                  }"""
-                  server.download(downloadSpec) 
-		  def buildInfo1 = server.download downloadSpec
-                  //def buildInfo2 = server.upload uploadSpec
+                  server.upload(uploadSpec) 
+		  //def buildInfo1 = server.download downloadSpec
+                  def buildInfo2 = server.upload uploadSpec
                   //buildInfo1.append buildInfo2
-                  server.publishBuildInfo buildInfo1
-                  	   
+                  server.publishBuildInfo buildInfo2
+                  
 	 }
       }
     }
   }
+}
 
+  
