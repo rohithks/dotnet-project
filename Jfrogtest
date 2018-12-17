@@ -44,8 +44,8 @@
     }
   stage('Update JIRA Ticket') {
   steps {
-        jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
-        jiraComment body: 'test', issueKey: 'jiraIssueSelector(issueSelector: [$class: \'DefaultIssueSelector\'])'
+   def serverInfo = jiraGetServerInfo()
+   echo serverInfo.data.toString()
      }
      }
     }
