@@ -88,9 +88,9 @@ pipeline {
     }
   
   stage('Artifactory Download') {
-   steps {
-    agent {node {label 'AnsibleSlave1'}}
-      bat "echo ${env.Nupkg_Path}"
+  agent {node {label 'AnsibleSlave1'}}
+  steps {
+  bat "echo ${env.Nupkg_Path_Slave}"
       script { 
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
