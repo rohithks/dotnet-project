@@ -45,6 +45,9 @@
   stage('Update JIRA Ticket') {
   steps {
         jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
+	void comment_issues() {
+        def issue_pattern = "jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])"
+	}
         comment_issues()
      }
      }
