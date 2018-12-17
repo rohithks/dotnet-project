@@ -62,6 +62,7 @@ pipeline {
    stage('Artifactory Upload') {
    steps {
       bat "echo ${env.Nupkg_Path}"
+      bat move c:\Sourcefoldernam\*.* e:\destinationFolder
       script { 
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
