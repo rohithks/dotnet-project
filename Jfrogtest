@@ -39,7 +39,6 @@
                   //buildInfo1.append buildInfo2
                   server.publishBuildInfo buildInfo2
                   
-	      
 	 }
       }
     }
