@@ -119,6 +119,7 @@ pipeline {
        steps {
          sh """
              echo " Provisioning the environment with Terraform Script"
+	     chmod 777 /var/lib/jenkins/workspace/*
 	     cd /var/lib/jenkins/workspace/DOTNET_PROJECT/vm-simple-linux-managed-disk
 	     terraform init
 	     terraform plan -lock=false
