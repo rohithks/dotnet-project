@@ -44,8 +44,10 @@
     }
   stage('Update JIRA Ticket') {
   steps {
+   script { 
    def serverInfo = jiraGetServerInfo()
    echo serverInfo.data.toString()
+   }
      }
      }
     }
