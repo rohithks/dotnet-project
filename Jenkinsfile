@@ -109,13 +109,12 @@ pipeline {
 		  //def buildInfo1 = server.download downloadSpec
                   def buildInfo2 = server.upload uploadSpec
                   //buildInfo1.append buildInfo2
-                  server.publishBuildInfo buildInfo2
-                  
+                  server.publishBuildInfo buildInfo2        
 	 }
       }
     }
   }
 }
-}
+
 
   
