@@ -25,7 +25,7 @@
                     "files": [
 		    {
                        "pattern":"${env.Nupkg_Path}/sample.2.0.0.nupkg",
-                       "target": "Nuget-repo-test/"${JIRA_STORY_ID}"/"
+                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
                     }
 		    ]
                  }"""
