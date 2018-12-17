@@ -20,14 +20,15 @@
 	       def buildVersion = currentBuild.number
                def server = Artifactory.server 'Jfrog_Artifactory'
                  
-                def uploadSpec = """{
+               def downloadSpec = """{
                     "files": [{
-                       "pattern": "${env.Nupkg_Path}/*.nupkg ",
-                       "target": "Nuget-repo-test/"
+		   
+                       "pattern":"Nuget-repo-test/sample.1.0.0.nupkg",
+                       "target":"C:\ "
                     }]
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
-		  server.upload(uploadSpec) 
+		  server.download(downloadSpec) 
                   bat 'echo "Jfrog Artifactory upload3"'
 	 }
 	}
