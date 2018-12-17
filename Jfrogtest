@@ -45,7 +45,7 @@
   stage('Update JIRA Ticket') {
   steps {
         jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
-        jiraComment body: '', issueKey: 'jiraIssueSelector(issueSelector: [$class: \'DefaultIssueSelector\'])'
+        comment_issues()
      }
      }
     }
