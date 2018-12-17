@@ -67,7 +67,7 @@ pipeline {
 	    if ("${ARTIFACT_UPLOAD}" == 'YES') {
                bat 'echo "Jfrog Artifactory upload1"'
 	       def buildVersion = currentBuild.number
-               def server = Artifactory.server 'Artifactory'
+               def server = Artifactory.server 'Jfrog_Artifactory'
                  
                 def uploadSpec = """{
                     "files": [{
