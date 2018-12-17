@@ -87,61 +87,6 @@ pipeline {
       }
     }
   }
+}
 	
-  stage('Artifactory Download') {
-   steps {
-      bat "echo ${env.Nupkg_Path}"
-      script { 
-	  def buildVersion = currentBuild.number
-          def server = Artifactory.server 'Jfrog_Artifactory'
-          def buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name = "${BUILD_INFO_NAME}"
-          buildInfo.number = "${BUILD_INFO_NUMBER}"
-          server.publishBuildInfo buildInfo
-                def uploadSpec = """{
-                    "files": [
-		    {
-                       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
-                       "target": "${env.Nupkg_Path}/"
-                    }
-		    ]
-                 }"""
-                  server.download(downloadSpec) 
-		     
-	 }
-      }
-    }
-  }
-		
-  stage('Environment Provisioning') {
-     agent {node {label 'AnsibleSlave1'}}
-       steps {
-         sh """
-         echo " Provisioning the environment with Terraform Script"
-	 cd /etc/vm-simple-linux-managed-disk
-	 terraform plan -lock=false
-	  """
-  }                    
- } 
-		 		 
-     stage('Deploy') {
-     agent {node {label 'AnsibleSlave1'}}
-     steps {
-         sh """
-         echo " Deploying To Server Through Ansible"
-         cd /etc/ansible
-	 ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
-         """
-  }                    
- }
-}
-}
-}
-
-
-
-
-
-
-
-
+ 
