@@ -1,3 +1,4 @@
+variable "resource_group" {
   description = "The name of the resource group in which to create the virtual network."
   default = "S123_Miami_hostname1_filer_FC1"
 }
