@@ -46,7 +46,7 @@
   steps {
         jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
 	void comment_issues() {
-        def issue_pattern = "jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])"
+        def issue_pattern = "DEV-\\d+"
 	}
         comment_issues()
      }
