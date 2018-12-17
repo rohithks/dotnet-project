@@ -13,25 +13,22 @@
   
   stage('Artifactory Upload') {
    steps {
-   script { 
-    bat 'echo "Jfrog Artifactory upload1"'
-    def buildVersion = currentBuild.number
-    def server = Artifactory.server 'Jfrog_Artifactory'
-                 
-        def uploadSpec  = """{
-            "files": [
-	    {
-		  "pattern": "${env.Nupkg_Path}/*.nupkg",
-                  "target": "Nuget-repo-test/"
+      script { 
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+                def uploadSpec = """{
+                    "files": [
+		    {
+                       "pattern": "${env.Nupkg_Path}/*.nupkg ",
+                       "target": "Nuget-repo-test/"
                     }
 		    ]
                  }"""
-               bat 'echo "Jfrog Artifactory upload2"' 
-	       server.upload(uploadSpec)  
-               bat 'echo "Jfrog Artifactory upload3"'
-  
+                  server.upload(uploadSpec) 
+                 
+	      
 	 }
-	}
       }
     }
-  } 
+  }
+	
