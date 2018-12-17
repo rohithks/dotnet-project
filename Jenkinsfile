@@ -72,7 +72,7 @@ pipeline {
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkg",
+                       "pattern":"${env.Nupkg_Path}/1-hello-world.1.0.0.nupkg",
                        "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
                     }
 		    ]
