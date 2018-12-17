@@ -106,13 +106,12 @@ pipeline {
                     }
 		    ]
                  }"""
-                  server.download(downloadSpec) 
-		     
+                  server.download(downloadSpec) 	     
 	 }
       }
     }
   }
-}
+
 
 
 
