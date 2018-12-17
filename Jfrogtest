@@ -22,13 +22,13 @@
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
           def buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name = 'super-frog'
-          buildInfo.number = 'v1.2.3'
+          buildInfo.name = '${BUILD_INFO_NAME}'
+          buildInfo.number = '${BUILD_INFO_NUMBER}'
           server.publishBuildInfo buildInfo
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":"${env.Nupkg_Path}/sample.2.0.0.nupkg",
+                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkg",
                        "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
                     }
 		    ]
