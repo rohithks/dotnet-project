@@ -48,7 +48,11 @@
     withEnv(['JIRA_SITE=JIRA']) {
       def serverInfo = jiraGetServerInfo()
       echo serverInfo.data.toString()
-      jiraAddComment idOrKey: 'jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])', comment: 'test comment'
+      //jiraAddComment idOrKey: 'jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])', comment: 'test comment'
+      def jiraIssues = jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
+      jiraIssues.each { issue ->
+	jiraAddComment comment: "{panel:bgColor=#97FF94}{code}Code was added to address this issue in build ${build}{code} {panel}", idOrKey: issue, site: ${JIRA_SITE}
+	
    }
      }
      }
