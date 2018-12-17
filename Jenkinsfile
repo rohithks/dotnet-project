@@ -87,7 +87,8 @@ pipeline {
       }
     }
   }
- stage('Artifactory Download') {
+	
+   stage('Artifactory Download') {
    steps {
       bat "echo ${env.Nupkg_Path}"
       script { 
@@ -111,6 +112,7 @@ pipeline {
       }
     }
   }
+}
 
 
 
