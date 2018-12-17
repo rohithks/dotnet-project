@@ -19,8 +19,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern": "Nuget-repo-test/",
-                       "target": "${env.Nupkg_Path}/*.nupkg "
+                       "pattern":"${env.Nupkg_Path}/sample.2.0.0.nupkg",
+                       "target": "Nuget-repo-test/"
                     }
 		    ]
                  }"""
