@@ -45,7 +45,8 @@
   stage('Update JIRA Ticket') {
   steps {
     step([$class: 'hudson.plugins.jira.JiraIssueUpdater', 
-    issueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'], 
+    //issueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'], 
+    jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
     scm: [$class: 'GitSCM', branches: [[name: '*/master']], 
     userRemoteConfigs: [[url: 'https://github.com/rohithks/dotnet-project.git']]]])
      }
