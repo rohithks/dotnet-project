@@ -48,7 +48,7 @@
     withEnv(['JIRA_SITE=JIRA']) {
       def serverInfo = jiraGetServerInfo()
       echo serverInfo.data.toString()
-      jiraAddComment idOrKey: 'DEV-1', comment: 'test comment'
+      jiraAddComment idOrKey: 'jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])', comment: 'test comment'
    }
      }
      }
