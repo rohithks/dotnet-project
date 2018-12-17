@@ -21,11 +21,7 @@
       script { 
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
-	  //def buildInfo1 = server.download downloadSpec
-          def buildInfo2 = server.upload uploadSpec
-          //buildInfo1.append buildInfo2
-          server.publishBuildInfo buildInfo2
-	  def buildInfo = Artifactory.newBuildInfo()
+          def buildInfo = Artifactory.newBuildInfo()
           buildInfo.name = 'super-frog'
           buildInfo.number = 'v1.2.3'
           server.publishBuildInfo buildInfo
@@ -38,7 +34,11 @@
 		    ]
                  }"""
                   server.upload(uploadSpec) 
-                 
+		  //def buildInfo1 = server.download downloadSpec
+                  def buildInfo2 = server.upload uploadSpec
+                  //buildInfo1.append buildInfo2
+                  server.publishBuildInfo buildInfo2
+                  
 	      
 	 }
       }
