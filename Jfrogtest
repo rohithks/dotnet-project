@@ -24,7 +24,7 @@
                     "files": [{
 		   
                        "pattern":"Nuget-repo-test/sample.1.0.0.nupkg",
-                       "target":"C:\ "
+                       "target":"D:\"
                     }]
                  }"""
                   bat 'echo "Jfrog Artifactory upload2"' 
