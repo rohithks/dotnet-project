@@ -87,8 +87,9 @@ pipeline {
       }
     }
   
-  stage('Artifactory Upload') {
+  stage('Artifactory Download') {
    steps {
+    agent {node {label 'AnsibleSlave1'}}
       bat "echo ${env.Nupkg_Path}"
       script { 
 	  def buildVersion = currentBuild.number
@@ -97,19 +98,19 @@ pipeline {
           buildInfo.name = "${BUILD_INFO_NAME}"
           buildInfo.number = "${BUILD_INFO_NUMBER}"
           server.publishBuildInfo buildInfo
-                def uploadSpec = """{
+                def downloadSpec = """{
                     "files": [
 		    {
-                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkg",
-                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
+		       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
+                       "target": "${env.Nupkg_Path_Slave}/"
                     }
 		    ]
                  }"""
-                  server.upload(uploadSpec) 
-		  //def buildInfo1 = server.download downloadSpec
-                  def buildInfo2 = server.upload uploadSpec
+                  server.download(downloadSpec) 
+		  def buildInfo1 = server.download downloadSpec
+                  //def buildInfo2 = server.upload uploadSpec
                   //buildInfo1.append buildInfo2
-                  server.publishBuildInfo buildInfo2        
+                  server.publishBuildInfo buildInfo1       
 	 }
       }
     }
