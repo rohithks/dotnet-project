@@ -15,6 +15,7 @@ pipeline {
     load "helloworldjenkins.properties"
   }
   }
+	 
    stage('Restore Packages') {
    steps {
      bat "echo ${APP_NAME}"
@@ -46,8 +47,7 @@ pipeline {
     }
    }
   
-   
-  stage('Pack') {
+   stage('Pack') {
    steps {
       script {
           if ("${NUPKG_PACK}" == 'YES') {
@@ -111,11 +111,9 @@ pipeline {
       }
     }
   }
-	
-	
-  
-    stage('Environment Provisioning') {
-       agent {node {label 'AnsibleSlave1'}}
+		
+  stage('Environment Provisioning') {
+     agent {node {label 'AnsibleSlave1'}}
        steps {
          sh """
          echo " Provisioning the environment with Terraform Script"
@@ -136,5 +134,5 @@ pipeline {
   }                    
  }
 }
-}
+
 
