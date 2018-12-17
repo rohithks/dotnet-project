@@ -42,6 +42,11 @@
 	 }
       }
     }
-  }
+  stage('Update JIRA Ticket') {
+  steps {
+    jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])  
+     }
+   }
+   }
   }
 	
