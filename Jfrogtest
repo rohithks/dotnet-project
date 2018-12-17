@@ -46,7 +46,7 @@
   steps {
   //jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
    
-  jiraissueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'], 
+  jiraissueSelector(issueSelector: [$class: 'hudson.plugins.jira.selector.DefaultIssueSelector'])
      }
      }
     }
