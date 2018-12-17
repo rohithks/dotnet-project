@@ -86,7 +86,7 @@ pipeline {
 	 }
       }
     }
-  }
+  
   stage('Artifactory Upload') {
    steps {
       bat "echo ${env.Nupkg_Path}"
@@ -114,7 +114,7 @@ pipeline {
       }
     }
   }
-
+}
 
 
   
