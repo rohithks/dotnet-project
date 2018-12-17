@@ -44,7 +44,26 @@
     }
   stage('Update JIRA Ticket') {
   steps {
-          jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
+          //jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
+	   # Look at IssueInput class for more information.
+    def testIssue1 = [fields: [ project: [id: '10000'],
+                                summary: 'New JIRA Created from Jenkins.',
+                                description: 'New JIRA Created from Jenkins.',
+                                issuetype: [id: '3']]]
+
+
+    def testIssue2 = [fields: [ project: [id: '10000'],
+                                summary: 'New JIRA Created from Jenkins.',
+                                description: 'New JIRA Created from Jenkins.',
+                                issuetype: [id: '3']]]
+
+    def testIssues = [issueUpdates: [testIssue1, testIssue2]]
+
+    response = jiraNewIssues issues: testIssues
+
+    echo response.successful.toString()
+    echo response.data.toString()
+ 
      }
      }
     }
