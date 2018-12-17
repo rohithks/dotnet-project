@@ -45,8 +45,10 @@
   stage('Update JIRA Ticket') {
   steps {
    script { 
-   def serverInfo = jiraGetServerInfo()
-   echo serverInfo.data.toString()
+    withEnv(['JIRA_SITE=LOCAL']) {
+      def serverInfo = jiraGetServerInfo()
+      echo serverInfo.data.toString()
+      jiraAddComment idOrKey: 'DEV-1', comment: 'test comment'
    }
      }
      }
