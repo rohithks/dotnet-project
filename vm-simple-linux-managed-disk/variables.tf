@@ -1,5 +1,5 @@
-variable "resource_group" {
   description = "The name of the resource group in which to create the virtual network."
+  default = "S123_Miami_hostname1_filer_FC1"
 }
 
 variable "rg_prefix" {
@@ -9,10 +9,12 @@ variable "rg_prefix" {
 
 variable "hostname" {
   description = "VM name referenced also in storage-related names."
+  default = " terraformtesting"
 }
 
 variable "dns_name" {
   description = " Label for the Domain Name. Will be used to make up the FQDN. If a domain name label is specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system."
+  default     = "terraformtestingg"
 }
 
 variable "location" {
@@ -34,7 +36,6 @@ variable "subnet_prefix" {
   description = "The address prefix to use for the subnet."
   default     = "10.0.10.0/24"
 }
-
 variable "storage_account_tier" {
   description = "Defines the Tier of storage account to be created. Valid options are Standard and Premium."
   default     = "Standard"
@@ -74,7 +75,7 @@ variable "admin_username" {
   description = "administrator user name"
   default     = "vmadmin"
 }
-
 variable "admin_password" {
   description = "administrator password (recommended to disable password auth)"
+  default     = "vmadmin"
 }
