@@ -28,7 +28,8 @@ pipeline {
    }  
   }
  }	
-  stage ('Build & SonarAnalysis'){
+  
+	 stage ('Build & SonarAnalysis'){
    steps {
       script {
             if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
