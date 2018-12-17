@@ -13,6 +13,7 @@
   
   stage('Artifactory Upload') {
    steps {
+      bat "echo ${env.Nupkg_Path}"
       script { 
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
