@@ -112,10 +112,9 @@ pipeline {
                   //def buildInfo2 = server.upload uploadSpec
                   //buildInfo1.append buildInfo2
                   server.publishBuildInfo buildInfo1
-                  	
-              
+                  	   
 	 }
       }
     }
   }
-}
+
