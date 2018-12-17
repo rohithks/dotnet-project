@@ -113,7 +113,31 @@ pipeline {
 	 }
       }
     }
-  }
+	 
+  stage('Environment Provisioning') {
+     agent {node {label 'AnsibleSlave1'}}
+       steps {
+         sh """
+             echo " Provisioning the environment with Terraform Script"
+	     cd /var/lib/jenkins/workspace/DOTNET_PROJECT/vm-simple-linux-managed-disk
+	     terraform init
+	     terraform plan -lock=false
+	  """
+  }                    
+ } 
+		 		 
+     stage('Deploy') {
+     agent {node {label 'AnsibleSlave1'}}
+     steps {
+         sh """
+         echo " Deploying To Server Through Ansible"
+         cd  /var/lib/jenkins/workspace/DOTNET_PROJECT
+         ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
+         """
+  }                    
+ }
+}
+}
 }
 
 
