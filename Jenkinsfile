@@ -88,13 +88,33 @@ pipeline {
     }
   }
 	
-   stage('Artifactory Download') {
-   steps {
-      	 bat "echo ${env.Nupkg_Path}"    
-	 }
-      }
-    }
-  
+  stage('Environment Provisioning') {
+     agent {node {label 'AnsibleSlave1'}}
+       steps {
+         sh """
+         echo " Provisioning the environment with Terraform Script"
+	 cd /etc/vm-simple-linux-managed-disk
+	 terraform plan -lock=false
+	  """
+  }                    
+ } 
+		 		 
+     stage('Deploy') {
+     agent {node {label 'AnsibleSlave1'}}
+     steps {
+         sh """
+         echo " Deploying To Server Through Ansible"
+         cd /etc/ansible
+	 ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
+         """
+  }                    
+ }
+}
+}
+}
+
+
+
 
 
 
