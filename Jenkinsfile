@@ -1,12 +1,8 @@
 pipeline {
  agent {node {label 'master'}}
  dotnet = "${tool 'MSBuild15_Path'}"
-{
-    //now you are on slave labeled with 'label'
-    def workspace = "${env.JENKINS_WORKSPACE}/${env.JOB_NAME}"
-    //${workspace} will now contain an absolute path to job workspace on slave 
-}
- }
+ def workspace = "${env.JENKINS_WORKSPACE}/${env.JOB_NAME}"
+   }
  stages {
   stage('Checkout') {
    steps {
