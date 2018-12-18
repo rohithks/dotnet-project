@@ -11,22 +11,16 @@
   }
   stage('Load Properties') {
   steps {
+  script {
     load "helloworldjenkins.properties"
-  }
-  }
-    stage('JIRA Update') {
-                always {
-                    script { 
+       script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}"
-                
-    
-            }
-         }
-      }
-	}
+  }
+  }
+  }
   
   stage('Artifactory Upload') {
    steps {
