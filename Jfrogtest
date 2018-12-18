@@ -45,17 +45,13 @@
     
   stage('JIRA') {
    steps {
-      def serverInfo = jiraGetServerInfo()
-      def jiraIssues = jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
-      def testIssue = [fields: [ project: [key: 'RFC'],
-                                 summary: 'New JIRA Created from Jenkins.',
-                                 description: 'New JIRA Created from Jenkins.',
-                                 issuetype: [id: '10500']]]
-
-      response = jiraNewIssue issue: testIssue, site: '${JIRA_SITE}'
-
-      echo response.successful.toString()
-      echo response.data.toString()
+      def searchResults = jiraJqlSearch jql: "project = DevOps AND issuekey = 'DEV-1'"
+      def issues = searchResults.data.issues
+      for (i = 0; i <issues.size(); i++) {
+        def fixVersion = jiraNewVersion version: [name: "new-fix-version-1.0",
+                                                project: "DevOps"]
+         def testIssue = [fields: [fixVersions: [fixVersion.data]]]
+      response = jiraEditIssue idOrKey: issues[i].key, issue: testIssue
     }
 }
 }
