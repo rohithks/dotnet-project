@@ -42,25 +42,24 @@
 	 }
       }
     }
-  stage('Update JIRA Ticket') {
-  steps {
-   script { 
-    withEnv(['JIRA_SITE=JIRA']) {
-      def serverInfo = jiraGetServerInfo()
-      echo serverInfo.data.toString()
-      step([$class: 'hudson.plugins.jira.JiraIssueUpdater',
-      restAPIUrl: ${JIRA_SITE},
-       jql: theJQLQueryThatWillFindYourIssuesToUpdate,
-       comment: test comment,
-       failIfJqlFails: true
-)
-	
-   }
-     }
-     }
+    
+  stage('JIRA') {
+   steps {
+    def testIssue = [fields: [ project: [key: 'RFC'],
+                                 summary: 'New JIRA Created from Jenkins.',
+                                 description: 'New JIRA Created from Jenkins.',
+                                 issuetype: [id: '10500']]]
+
+      response = jiraNewIssue issue: testIssue, site: '${JIRA_STORY_ID}'
+
+      echo response.successful.toString()
+      echo response.data.toString()
     }
-  }
-  }
-  }
+}
+}
+     }
+   
+
+  
   
 	
