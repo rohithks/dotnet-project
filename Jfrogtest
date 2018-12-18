@@ -45,12 +45,14 @@
     
   stage('JIRA') {
    steps {
-    def testIssue = [fields: [ project: [key: 'RFC'],
+      def serverInfo = jiraGetServerInfo()
+      def jiraIssues = jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
+      def testIssue = [fields: [ project: [key: 'RFC'],
                                  summary: 'New JIRA Created from Jenkins.',
                                  description: 'New JIRA Created from Jenkins.',
                                  issuetype: [id: '10500']]]
 
-      response = jiraNewIssue issue: testIssue, site: '${JIRA_STORY_ID}'
+      response = jiraNewIssue issue: testIssue, site: '${JIRA_SITE}'
 
       echo response.successful.toString()
       echo response.data.toString()
