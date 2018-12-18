@@ -1,8 +1,10 @@
-pipeline {
+ pipeline {
  agent {node {label 'master'}}
- dotnet = "${tool 'MSBuild15_Path'}"
  def workspace = "${env.JENKINS_WORKSPACE}/${env.JOB_NAME}"
-   }
+ environment {
+  dotnet = "${tool 'MSBuild15_Path'}"
+ }
+ 
  stages {
   stage('Checkout') {
    steps {
