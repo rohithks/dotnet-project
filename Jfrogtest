@@ -45,6 +45,8 @@
     
   stage('JIRA') {
    steps {
+      def serverInfo = jiraGetServerInfo()
+      def jiraIssues = jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
       def searchResults = jiraJqlSearch jql: "project = DevOps AND issuekey = 'DEV-1'"
       def issues = searchResults.data.issues
       for (i = 0; i <issues.size(); i++) {
