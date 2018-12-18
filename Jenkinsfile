@@ -1,6 +1,6 @@
  pipeline {
  agent {node {label 'master'}}
- ws "${env.JENKINS_WORKSPACE}/${env.JOB_NAME}"
+
  environment {
   dotnet = "${tool 'MSBuild15_Path'}"
  }
