@@ -45,6 +45,7 @@
     
   stage('JIRA') {
    steps {
+     script { 
       def server = Jira.server 'JIRA'
       def serverInfo = jiraGetServerInfo()
       def jiraIssues = jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
@@ -58,6 +59,7 @@
     }
    }
   }
+ }
  }
 }
    
