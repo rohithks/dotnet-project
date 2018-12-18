@@ -21,6 +21,7 @@
   }
   }
   }
+  }
   
   stage('Artifactory Upload') {
    steps {
