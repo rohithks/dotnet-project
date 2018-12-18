@@ -14,7 +14,7 @@
     load "helloworldjenkins.properties"
   }
   }
-    stage(JIRA Update) {
+    stage('JIRA Update') {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
