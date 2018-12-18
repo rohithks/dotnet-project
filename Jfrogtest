@@ -13,7 +13,6 @@
   steps {
   script {
     load "helloworldjenkins.properties"
-       script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
@@ -66,7 +65,7 @@
       }
 	}
 	}
-	}
+	
 	
  
     
