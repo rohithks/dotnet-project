@@ -49,7 +49,7 @@
       def serverInfo = jiraGetServerInfo()
       echo serverInfo.data.toString()
       step([$class: 'hudson.plugins.jira.JiraIssueUpdater',
-      restAPIUrl: https://rohithsoman.atlassian.net/,
+      restAPIUrl: ${JIRA_SITE},
        jql: theJQLQueryThatWillFindYourIssuesToUpdate,
        comment: test comment,
        failIfJqlFails: true
