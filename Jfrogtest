@@ -39,23 +39,11 @@
                   //buildInfo1.append buildInfo2
                   server.publishBuildInfo buildInfo2
 		  }
-		  post {
-                always {
-                    script { 
-                withEnv(['JIRA_SITE=JIRA']) {
-                def serverInfo = jiraGetServerInfo()
-                echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"${currentBuild.currentResult}"
-                bat "echo ${currentBuild.currentResult}"
-                bat "echo ${$$BUILD_URL}"
-      
-            }
-         }
+   	
+        }
+       }
       }
-    }
-    }
-    }
-    }
+     }
     }
     
   
