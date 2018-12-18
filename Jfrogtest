@@ -28,8 +28,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":"${env.Nupkg_Path}/sample.3.0.0.nupkgg",
-                       "target": "Nuget-repo-test11/${JIRA_STORY_ID}/"
+                       "pattern":
+                       "target":
                     }
 		    ]
                  }"""
