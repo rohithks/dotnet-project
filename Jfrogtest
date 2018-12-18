@@ -51,6 +51,8 @@
       echo serverInfo.data.toString()
       jiraAddComment idOrKey: 'DEV-1', comment:"${currentBuild.currentResult}"
       bat "echo ${currentBuild.currentResult}"
+      bat "echo ${$BUILD_STATUS}"
+      bat "echo ${$$BUILD_URL}"
       
    }
   }
