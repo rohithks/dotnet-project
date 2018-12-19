@@ -12,7 +12,7 @@
   stage('Load Properties') {
   steps {
  
-    load "helloworldjenkins.properties"
+    load "helloworldjenkins.properties11"
                 
   }
      post {
@@ -45,8 +45,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":
-                       "target":
+                       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
+                       "target": "${env.Nupkg_Path}/"
                     }
 		    ]
                  }"""
