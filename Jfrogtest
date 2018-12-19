@@ -16,7 +16,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment  [{idOrKey=${JIRA_STORY_ID}}, Git Checkout${currentBuild.currentResult}]"
+                jiraAddComment idOrKey="[${JIRA_STORY_ID}, Git Checkout${currentBuild.currentResult}]"
             }
          }
       }
