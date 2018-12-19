@@ -15,7 +15,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Git Chechout ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: ${JIRA_STORY_ID}, comment:"Git Chechout ${currentBuild.currentResult}"
             }
          }
       }
@@ -32,7 +32,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Load Propertyfile ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: ${JIRA_STORY_ID}, comment:"Load Propertyfile ${currentBuild.currentResult}"
             }
          }
        }
