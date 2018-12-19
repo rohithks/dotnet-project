@@ -139,8 +139,7 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
-			       Assignee: 'rohith.soman@infosys.com',
-                               //customfield_1000: 'customValue',
+			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
 
