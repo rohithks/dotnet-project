@@ -28,7 +28,7 @@
   stage('Load Properties') {
   steps {
  
-    load "helloworldjenkins.properties11"
+    load "helloworldjenkins.properties"
                 
   }
      post {
