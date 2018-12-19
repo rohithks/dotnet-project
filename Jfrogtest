@@ -165,7 +165,7 @@
 	}
       
    }
-  }
+  
   
   stage('Artifactory Download') {
   agent {node {label 'AnsibleSlave1'}}
