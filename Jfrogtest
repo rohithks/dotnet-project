@@ -2,9 +2,9 @@
   agent any
   environment {
   dotnet = "${tool 'MSBuild15_Path'}"
- }
- stages {
-  stage('Checkout') {
+  }
+  stages {
+   stage('Checkout') {
    steps {
     checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
    }
@@ -16,9 +16,6 @@
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: 'DEV-1', comment:"Git Chechout ${currentBuild.currentResult}"
-		
-                
-    
             }
          }
       }
@@ -27,9 +24,32 @@
 
   stage('Load Properties') {
   steps {
- 
     load "helloworldjenkins.properties"
-                
+  }
+   post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}
+            }
+         }
+       }
+     }
+  }
+  
+  stage('Restore Packages') {
+   steps {
+     bat "echo ${APP_NAME}"
+      script {
+            if ("${APP_NAME}" == 'HelloWorld') {
+            echo 'Restoring the packages for Helloworld'
+            bat "\"${env.Nuget_Path}\" restore 1-hello-world"
+             } else {
+            echo 'No Packages found named HelloWorld'
+     }   
+   }  
   }
      post {
                 always {
@@ -37,17 +57,13 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}"
-		
-                
-    
+                jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}
             }
          }
        }
      }
   }
-  
-  stage ('Build & SonarAnalysis'){
+ stage ('Build & SonarAnalysis'){
    steps {
       script {
             if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
@@ -59,7 +75,7 @@
                bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
                
 	      } else {
-               echo 'No Build and Sonaranalysis'
+               echo 'No Build and Sonaranalysis for this project'
         }
       }
     }
