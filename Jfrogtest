@@ -16,7 +16,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "{${JIRA_STORY_ID}}" comment:"Load Propertyfile ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Load Propertyfile ${currentBuild.currentResult}"
             }
          }
       }
@@ -26,19 +26,8 @@
   stage('Load Properties') {
   steps {
     load "helloworldjenkins.properties"
-  }
-   post {
-                always {
-                    script { 
-                withEnv(['JIRA_SITE=JIRA']) {
-                def serverInfo = jiraGetServerInfo()
-                echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Load Propertyfile ${currentBuild.currentResult}"
-            }
-         }
-       }
-     }
-  }
+    }
+   }
   
   stage('Restore Packages') {
    steps {
