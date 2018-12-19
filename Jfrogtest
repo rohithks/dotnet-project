@@ -79,8 +79,7 @@
       script {
             if ("${NUNIT_TEST}" == 'YES') {
             echo 'Restoring the packages for Helloworld'
-	    def nunitRunner = "\"${NUnit3_Path}\"
-	    NUnit3_Path_File
+	    def nunitRunner = "${env.NUnit3_Path}"
 	    bat "\"${env.NUnit3_Path}\" "${env.NUnit3_Path_File}\1-hello-world.dll"
 	  
              } else {
