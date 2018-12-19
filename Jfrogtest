@@ -73,8 +73,9 @@
     }
     
     post { 
-       script { 
-       if ( "currentBuild.currentResult" == 'FAILURE') {
+         always {
+            script { 
+       if ( "${currentBuild.currentResult}" == 'FAILURE') {
       withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
@@ -91,6 +92,7 @@
 
     echo response.successful.toString()
     echo response.data.toString()
+                   }
                  }
                }
             }
