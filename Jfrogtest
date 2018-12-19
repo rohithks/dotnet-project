@@ -168,7 +168,7 @@
   agent {node {label 'AnsibleSlave1'}}
   steps {
       script { 
-          if ("${ARTIFACT_DOWNLOAD}" == 'YES') {
+         if ("${ARTIFACT_DOWNLOAD}" == 'YES') {
 	  def buildVersion = currentBuild.number
           def server = Artifactory.server 'Jfrog_Artifactory'
           def buildInfo = Artifactory.newBuildInfo()
@@ -238,7 +238,8 @@
         }
       }
     }
-     stage('Deploy') {
+    
+    stage('Deploy') {
     agent {node {label 'AnsibleSlave1'}}
     steps {
      script {
@@ -256,7 +257,7 @@
    }
  }
 
- post {
+    post {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
@@ -270,7 +271,7 @@
         }
       }
     }
-  }
+  
   
   
 
