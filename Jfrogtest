@@ -63,7 +63,7 @@
         }
       }
     }
-   }
+  
       post {
                 always {
                     script { 
@@ -77,8 +77,33 @@
          }
       }
   }
- }
- }
+  
+   stage('Pack') {
+   steps {
+      script {
+          if ("${NUPKG_PACK}" == 'YES') {
+              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+	  } else {
+              echo 'Not packing anything'
+    }
+   }
+   }
+  
+     post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+  }
+  }
+
 	
 	
  
