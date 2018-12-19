@@ -71,6 +71,30 @@
          }
       }
     }
+    
+    post { 
+       script { 
+       if ( "${currentBuild.currentResult}" == 'FAILURE') {
+      withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+    def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       Assignee: 'rohith.soman@infosys.com',
+                               //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+
+    echo response.successful.toString()
+    echo response.data.toString()
+                 }
+               }
+            }
+	 }
   }
   
 
