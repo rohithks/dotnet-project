@@ -64,7 +64,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
                 
     
             }
@@ -89,7 +89,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Pack ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Pack ${currentBuild.currentResult}"
                 
     
             }
@@ -133,7 +133,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Artifactory Upload ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Upload ${currentBuild.currentResult}"
                 
     
             }
@@ -175,7 +175,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Artifactory Download ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Download ${currentBuild.currentResult}"
                 
     
             }
@@ -208,7 +208,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Environment Provision ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Environment Provision ${currentBuild.currentResult}"
                 
     
             }
