@@ -1,6 +1,6 @@
   pipeline {
   agent any
- environment {
+  environment {
   dotnet = "${tool 'MSBuild15_Path'}"
  }
  stages {
@@ -8,7 +8,23 @@
    steps {
     checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
    }
+   
+    post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"Git Chechout ${currentBuild.currentResult}"
+		
+                
+    
+            }
+         }
+      }
+    }
   }
+
   stage('Load Properties') {
   steps {
  
@@ -27,8 +43,8 @@
     
             }
          }
-      }
-	}
+       }
+     }
   }
   
   
