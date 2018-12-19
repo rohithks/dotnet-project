@@ -15,7 +15,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Git Chechout ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Git Chechout ${currentBuild.currentResult}"
             }
          }
       }
@@ -32,7 +32,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Load Propertyfile ${currentBuild.currentResult}"
             }
          }
        }
@@ -57,7 +57,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Restore Package ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Restore Package ${currentBuild.currentResult}"
             }
          }
        }
@@ -86,7 +86,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
                 
     
             }
@@ -111,7 +111,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Pack ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Pack ${currentBuild.currentResult}"
                 
     
             }
@@ -155,7 +155,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Artifactory Upload ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Artifactory Upload ${currentBuild.currentResult}"
                 
     
             }
@@ -197,7 +197,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Artifactory Download ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Artifactory Download ${currentBuild.currentResult}"
                 
     
             }
@@ -205,9 +205,69 @@
       }
     }
   }
-  }
+  
+   stage('Environment Provisioning') {
+   agent {node {label 'AnsibleSlave1'}}
+       steps {
+       if ("${ENVIRONMENT_PROVISION}" == 'YES') {
+         sh """
+             echo " Provisioning the environment with Terraform Script"
+	     chmod 777 /var/lib/jenkins/workspace/*
+	     cd /var/lib/jenkins/workspace/DOTNET_PROJECT/vm-simple-linux-managed-disk
+	     terraform init
+	     terraform plan -lock=false
+	  """
+	}else {
+           echo 'Environment not provisioned'
+       }                    
+    }
+ }
+ 
+     post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Environment Provision ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
   }
   
+    stage('Deploy') {
+    agent {node {label 'AnsibleSlave1'}}
+    steps {
+     if ("${DEPLOY_STG}" == 'YES') {
+         sh """
+         echo " Deploying To Server Through Ansible"
+         cd  /var/lib/jenkins/workspace/DOTNET_PROJECT
+         ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
+         """
+	 }else {
+           echo 'Environment not provisioned'
+    }                    
+  }
+}
+
+ post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Deploy ${currentBuild.currentResult}"
+              
+	     }
+          }                    
+        }
+      }
+    }
+  }
+}
 
 	
 	
