@@ -136,17 +136,17 @@
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Pack ${currentBuild.currentResult}"
-        }
-       }
-	   }
-        }
+           }
+          }
+	 }
+ 
         failure {
            script { 
        if ( "${currentBuild.currentResult}" == 'FAILURE') {
       withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-    def testIssue = [fields: [ // id or key must present for project.
+      def testIssue = [fields: [ // id or key must present for project.
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
