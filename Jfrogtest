@@ -1,5 +1,5 @@
   pipeline {
-  agent any
+  agent {node {label 'master'}}
   environment {
   dotnet = "${tool 'MSBuild15_Path'}"
   }
@@ -57,7 +57,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Load Propertyfile ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: 'DEV-1', comment:"Restore Package ${currentBuild.currentResult}"
             }
          }
        }
@@ -92,7 +92,118 @@
             }
          }
       }
+    }
   }
+  
+   stage('Pack') {
+    steps {
+      script {
+          if ("${NUPKG_PACK}" == 'YES') {
+              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+	  } else {
+              echo 'Not packed Dotnet package'
+      }
+     }
+    }
+        post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"Pack ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
+  }
+  
+  stage('Artifactory Upload') {
+   steps {
+     bat "echo ${env.Nupkg_Path}"
+      script { 
+        if ("${ARTIFACT_UPLOAD}" == 'YES') {
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          //buildInfo.name = "${BUILD_INFO_NAME}"
+          //buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
+                def uploadSpec = """{
+                    "files": [
+		    {
+                       "pattern":"${env.Nupkg_Path}/1-hello-world.1.0.0.nupkg",
+                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
+                    }
+		    ]
+                 }"""
+                  server.upload(uploadSpec) 
+                  def buildInfo2 = server.upload uploadSpec
+                  server.publishBuildInfo buildInfo2
+	   }else {
+             echo 'No Artifactory Upload'
+                  
+	 }
+      }
+    }
+    
+       post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"Artifactory Upload ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
+  }
+  
+  stage('Artifactory Download') {
+  agent {node {label 'AnsibleSlave1'}}
+  steps {
+      script { 
+          if ("${ARTIFACT_DOWNLOAD}" == 'YES') {
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          //buildInfo.name = "${BUILD_INFO_NAME}"
+          //buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
+                def downloadSpec = """{
+                    "files": [
+		    {
+		       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
+                       "target": "${env.Nupkg_Path}/"
+                    }
+		    ]
+                 }"""
+                  server.download(downloadSpec) 
+		  def buildInfo1 = server.download downloadSpec
+                  server.publishBuildInfo buildInfo1   
+          }else {
+             echo 'No Artifactory Download'
+	 }
+      }
+    }
+       post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: 'DEV-1', comment:"Artifactory Download ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
   }
   }
   }
