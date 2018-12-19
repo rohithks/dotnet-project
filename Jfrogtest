@@ -22,7 +22,7 @@
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: 'DEV-1', comment:"Property Upload ${currentBuild.currentResult}"
-		 bat "echo ${currentStage.result}"
+		
                 
     
             }
