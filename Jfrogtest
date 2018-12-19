@@ -239,7 +239,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"DEPLOY ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy ${currentBuild.currentResult}"
                 
             }
          }
