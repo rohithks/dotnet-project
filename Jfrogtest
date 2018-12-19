@@ -241,13 +241,12 @@
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"DEPLOY ${currentBuild.currentResult}"
                 
-    
             }
          }
       }
     }
   }
-  }
+  
 
   
   
