@@ -57,32 +57,20 @@
         }
       }
     }
-     
-    post { 
-         always {
-            script { 
-       if ( "${currentBuild.currentResult}" == 'FAILURE') {
-      withEnv(['JIRA_SITE=JIRA']) {
+    post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-    def testIssue = [fields: [ // id or key must present for project.
-                               project: [id: '10000'],
-                               summary: 'New JIRA Created from Jenkins.',
-                               description: 'New JIRA Created from Jenkins.',
-			       Assignee: 'rohith.soman@infosys.com',
-                               //customfield_1000: 'customValue',
-                               // id or name must present for issueType.
-                               issuetype: [id: '10004']]]
-
-    response = jiraNewIssue issue: testIssue
-
-    echo response.successful.toString()
-    echo response.data.toString()
-                   }
-                 }
-               }
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
+                
+    
             }
-	 }
+         }
+      }
+    }  
+   
   }
   
 
@@ -125,8 +113,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":"${env.Nupkg_Path}/1-hello-world.1.0.0.nupkg",
-                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
+                       "pattern":
+                       "target": 
                     }
 		    ]
                  }"""
@@ -140,19 +128,32 @@
       }
     }
     
-       post {
-                always {
-                    script { 
-                withEnv(['JIRA_SITE=JIRA']) {
+     post { 
+         always {
+            script { 
+       if ( "${currentBuild.currentResult}" == 'FAILURE') {
+      withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Upload ${currentBuild.currentResult}"
-                
-    
+    def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       Assignee: 'rohith.soman@infosys.com',
+                               //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+
+    echo response.successful.toString()
+    echo response.data.toString()
+                   }
+                 }
+               }
             }
-         }
-      }
-    }
+	}
+      
   }
   
   stage('Artifactory Download') {
