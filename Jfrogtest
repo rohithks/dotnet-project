@@ -179,7 +179,7 @@
                     "files": [
 		    {
 		       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
-                       "target": "${env.Nupkg_Path}/"
+                       "target": "${Nupkg_Path_Slave}/"
                     }
 		    ]
                  }"""
