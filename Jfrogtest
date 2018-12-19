@@ -128,9 +128,20 @@
       }
     }
     
-     post { 
+     
+ post {
          always {
-            script { 
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Pack ${currentBuild.currentResult}"
+        }
+       }
+	   }
+        }
+        failure {
+           script { 
        if ( "${currentBuild.currentResult}" == 'FAILURE') {
       withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
@@ -153,6 +164,7 @@
             }
 	}
       
+   }
   }
   
   stage('Artifactory Download') {
