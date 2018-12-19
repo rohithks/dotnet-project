@@ -239,49 +239,4 @@
       }
     }
     
-    stage('Deploy') {
-    agent {node {label 'AnsibleSlave1'}}
-    steps {
-     script {
-       if ("${DEPLOY_STG}" == 'YES') {
-         sh """
-         echo " Deploying To Server Through Ansible"
-         cd  /var/lib/jenkins/workspace/DOTNET_PROJECT
-         ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
-         """
-       }else {
-        echo 'Deployment not happened'
-         }                    
-       }
-     }
-   }
- }
-
-    post {
-                always {
-                    script { 
-                withEnv(['JIRA_SITE=JIRA']) {
-                def serverInfo = jiraGetServerInfo()
-                echo serverInfo.data.toString()
-                jiraAddComment idOrKey: '${JIRA_STORY_ID}', comment:"Deploy ${currentBuild.currentResult}"
-              
-	      }
-            }                    
-          }
-        }
-      }
-    }
-  
-  
-  
-
-
-	
-	
-	
- 
     
-  
-  
-  
-	
