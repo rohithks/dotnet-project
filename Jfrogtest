@@ -47,43 +47,30 @@
      }
   }
   
-  
-  stage('Artifactory Upload') {
+  stage ('Build & SonarAnalysis'){
    steps {
-      bat "echo ${env.Nupkg_Path}"
-      script { 
-	  def buildVersion = currentBuild.number
-          def server = Artifactory.server 'Jfrog_Artifactory'
-          def buildInfo = Artifactory.newBuildInfo()
-          buildInfo.name = "${BUILD_INFO_NAME}"
-          buildInfo.number = "${BUILD_INFO_NUMBER}"
-          server.publishBuildInfo buildInfo
-                def uploadSpec = """{
-                    "files": [
-		    {
-                       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
-                       "target": "${env.Nupkg_Path}/"
-                    }
-		    ]
-                 }"""
-                  server.upload(uploadSpec) 
-		  //def buildInfo1 = server.download downloadSpec
-                  def buildInfo2 = server.upload uploadSpec
-                  //buildInfo1.append buildInfo2
-                  server.publishBuildInfo buildInfo2
-		  }
-   	
+      script {
+            if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
+                 withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+				
+               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
+				
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
+               
+	      } else {
+               echo 'No Build and Sonaranalysis'
         }
-       }
       }
-     
+    }
+   }
       post {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: 'DEV-1', comment:"Artifact Upload ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: 'DEV-1', comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
                 
     
             }
