@@ -80,7 +80,9 @@
             bat "echo ${env.NUnit3_Path}}"
 	        def nunitRunner = "${env.NUnit3_Path}"
 	      //bat("${env.NUnit3_Path}" "${env.NUnit3_Path_File}"\1-hello-world.dll"
-		    bat("${env.NUnit3_Path} "${env.NUnit3_Path_File}"\1-hello-world.dll" )
+		bat( "\"${env.NUnit3_Path}"  \"${env.NUnit3_Path_File}"\1-hello-world.dll" )
+		
+		
 	  
           } else {
             echo 'No NUnit Test'
