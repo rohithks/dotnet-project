@@ -78,13 +78,8 @@
       script {
           if ("${NUNIT_TEST}" == 'YES') {
             bat "echo ${env.NUnit3_Path}}"
-	        def nunitRunner = "${env.NUnit3_Path}"
-		bat "\"${env.NUnit3_Path}\\nunit-console-x86.exe\" 1-hello-world\\bin\1-hello-world.dll"
-	      //bat("${env.NUnit3_Path}" "${env.NUnit3_Path_File}"\1-hello-world.dll"
-		//bat "\"${env.NUnit3_Path}"  \"${env.NUnit3_Path_File}"\1-h
-		
-		
-	  
+	    bat "\"${env.NUnit3_Path}\\nunit-console-x86.exe\" 1-hello-world\\bin\1-hello-world.dll"
+	      
           } else {
             echo 'No NUnit Test'
      }   
