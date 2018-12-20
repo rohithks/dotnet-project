@@ -18,7 +18,9 @@
     load "Jenkinstest1.properties"
     }
    }
-  
+   
+// Restoring the required packages for project
+
   stage('Restore Packages') {
    steps {
      bat "echo ${APP_NAME}"
@@ -31,7 +33,7 @@
      }   
    }  
   }
-     post {
+   post {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
@@ -41,8 +43,34 @@
             }
          }
        }
-     }
-  }
+ 
+    failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+          response = jiraNewIssue issue: testIssue
+          echo response.successful.toString()
+          echo response.data.toString()
+                  
+		  }
+                 }
+               }
+            }
+          }
+       }
+       
+  //Building the Dotnet project and Sonarqube Analysis
+  
  stage ('Build & SonarAnalysis'){
    steps {
       script {
@@ -59,20 +87,43 @@
         }
       }
     }
-    post {
+     post {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
-                
-    
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Build&SonarAnalysis ${currentBuild.currentResult}"
             }
          }
-      }
-    }  
-  }
+       }
+ 
+    failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+          response = jiraNewIssue issue: testIssue
+          echo response.successful.toString()
+          echo response.data.toString()
+                  
+		   }
+                 }
+               }
+            }
+          }
+       }
+    
+  // Unit test by using NUnit 
   
    stage('NUnit Test') {
    steps {
@@ -84,15 +135,47 @@
                  keepJUnitReports: true, skipJUnitArchiver:false, failIfNoResults: true]) 
           } else {
             echo 'No NUnit Test'
-     }   
-   }  
+      }   
+    }  
   }
-  }
-  
-  
-  
-  
+   post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Nunit Test ${currentBuild.currentResult}"
+            }
+         }
+       }
+ 
+    failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
 
+          response = jiraNewIssue issue: testIssue
+          echo response.successful.toString()
+          echo response.data.toString()
+                  
+		   }
+                 }
+               }
+            }
+          }
+       }
+       
+  // Packing the Dotnet net project build to .Nupkg 
+  
    stage('Pack') {
     steps {
       script {
@@ -103,20 +186,43 @@
       }
      }
     }
-        post {
+     post {
                 always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Pack ${currentBuild.currentResult}"
-                
-    
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Packing ${currentBuild.currentResult}"
             }
          }
-      }
-    }
-  }
+       }
+ 
+     failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+          response = jiraNewIssue issue: testIssue
+          echo response.successful.toString()
+          echo response.data.toString()
+                  
+		   }
+                 }
+               }
+            }
+          }
+       }
+       
+   // Uploading .Nupkg package to JFrog Artifactory
   
   stage('Artifactory Upload') {
    steps {
@@ -147,8 +253,7 @@
       }
     }
     
-     
- post {
+   post {
          always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
@@ -174,17 +279,16 @@
                                issuetype: [id: '10004']]]
 
     response = jiraNewIssue issue: testIssue
-
     echo response.successful.toString()
     echo response.data.toString()
                    }
                  }
                }
             }
-	}
-      
-   }
+	  }
+       }
   
+  // Downloading .Nupkg package from Jfrog Artifactory
   
   stage('Artifactory Download') {
   agent {node {label 'AnsibleSlave1'}}
@@ -213,20 +317,42 @@
 	 }
       }
     }
-       post {
-                always {
+   post {
+         always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
                 jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Download ${currentBuild.currentResult}"
-                
-    
+           }
+          }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+        response = jiraNewIssue issue: testIssue
+        echo response.successful.toString()
+        echo response.data.toString()
+                   }
+                 }
+               }
             }
-         }
-      }
-    }
-  }
+	  }
+       }
+  
+  //Provisioning the Environment by using Terraform ,Terraform installed in Jenkins Slave (AnsibleMaster) machine.
   
    stage('Environment Provisioning') {
    agent {node {label 'AnsibleSlave1'}}
@@ -246,19 +372,42 @@
     }
  }
  
-     post {
-                always {
+    post {
+         always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Environment Provision ${currentBuild.currentResult}"
-                
-            }
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Environment Provisioning ${currentBuild.currentResult}"
+           }
           }
-        }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+        response = jiraNewIssue issue: testIssue
+        echo response.successful.toString()
+        echo response.data.toString()
+                   }
+                 }
+               }
+            }
+	  }
        }
-     }
+       
+    //Deploying Artifact to the server
      
     stage('Deploy') {
     agent {node {label 'AnsibleSlave1'}}
@@ -277,20 +426,91 @@
      }
    }
  }
-  post {
-                always {
+ post {
+         always {
                     script { 
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy ${currentBuild.currentResult}"
-                
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy  ${currentBuild.currentResult}"
+           }
+          }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+    echo response.successful.toString()
+    echo response.data.toString()
+                   }
+                 }
+               }
             }
-         }
-      }
-    }
-  }
-  
+	  }
+       }
+       
+     stage('Selenium Test') {
+    agent {node {label 'AnsibleSlave1'}}
+    steps {
+     script {
+       if ("${SELENIUM_TEST}" == 'YES') {
+         sh """
+         echo " Selenium Testing"
+        
+         """
+       }else {
+        echo 'Not Tested Selenium'
+         }                    
+       }
+     }
+   }
+ }
+ post {
+         always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Selenium Test  ${currentBuild.currentResult}"
+           }
+          }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+    echo response.successful.toString()
+    echo response.data.toString()
+                   }
+                 }
+               }
+            }
+	  }
+       }
   
 
   
