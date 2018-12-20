@@ -242,8 +242,9 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":
-                       "target": 
+                       "pattern": "${Nupkg_Path}/*.nupkg",
+                       "target":  "Nuget-repo-test/${JIRA_STORY_ID}/"
+		  
                     }
 		    ]
                  }"""
@@ -343,6 +344,7 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
+			       assignee: [name:"${ARTDOW_ASSGINEE}"],
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
@@ -367,7 +369,7 @@
           sh """
              echo " Provisioning the environment with Terraform Script"
 	     chmod 777 /var/lib/jenkins/workspace/*
-	     cd /var/lib/jenkins/workspace/jfrogtest/vm-simple-linux-managed-disk
+	     cd "${TARA_SCRIPT_LOCATION}"
 	     terraform init
 	     terraform plan -lock=false
 	  """
@@ -398,6 +400,7 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
+			       assignee: [name:"${ENV_ASSIGNEE}"],
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
@@ -421,7 +424,7 @@
        if ("${DEPLOY_STG}" == 'YES') {
          sh """
          echo " Deploying To Server Through Ansible"
-         cd  /var/lib/jenkins/workspace/jfrogtest
+         cd  "${ANSIBLE_PLAYBOOK}"
          ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
          """
        }else {
@@ -452,6 +455,60 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
+			       assignee: [name:"${DEP_ASSIGNEE}"],
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+    echo response.successful.toString()
+    echo response.data.toString()
+                   }
+                 }
+               }
+            }
+	  }
+       }
+       
+    //Deploying Artifact to the server
+     
+    stage('Selenium Testing') {
+    steps {
+     script {
+       if ("${SELENIUM_TEST}" == 'YES') {
+         sh """
+         echo " Testing"
+         
+         """
+       }else {
+        echo 'Deployment not happened'
+         }                    
+       }
+     }
+   }
+ }
+ post {
+         always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy  ${currentBuild.currentResult}"
+           }
+          }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       assignee: [name:"${SEL_ASSIGNEE}"],
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
