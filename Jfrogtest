@@ -153,7 +153,8 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
-			       assignee: [{"set": {"name": "Mahesh Gogineni"}}],
+			       User usera = userManager.getUser('Mahesh Gogineni');
+                               issue.setAssignee(usera);
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
