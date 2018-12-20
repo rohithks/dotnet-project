@@ -29,7 +29,7 @@
             echo 'Restoring the packages for JENKINS-TEST1'
             bat "\"${env.Nuget_Path}\" restore JENKINS-TEST1"
              } else {
-            echo 'No Packages found named HelloWorld'
+            echo 'No Packages found named JENKINS-TEST1'
      }   
    }  
   }
@@ -432,8 +432,7 @@
          }                    
        }
      }
-   }
- }
+ 
  post {
          always {
                     script { 
