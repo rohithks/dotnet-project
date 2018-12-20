@@ -50,7 +50,7 @@
                  withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
                bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"JENKINSTEST\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
 				
-               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" JENKINS-TEST1\\JENKINS-TEST1\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
+               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" JENKINS-TEST1\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
 				
                bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
                
