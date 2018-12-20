@@ -1,0 +1,283 @@
+ pipeline {
+  agent {node {label 'master'}}
+  environment {
+  dotnet = "${tool 'MSBuild15_Path'}"
+  
+  }
+  stages {
+   stage('Checkout') {
+    steps {
+     checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
+    }
+   }
+   
+//Loading the propertyfile and Loading the values needed for pipeline run propertyfile
+
+  stage('Load Properties') {
+  steps {
+    load "helloworldjenkins.properties"
+    }
+   }
+  
+  stage('Restore Packages') {
+   steps {
+     bat "echo ${APP_NAME}"
+      script {
+            if ("${APP_NAME}" == 'HelloWorld') {
+            echo 'Restoring the packages for Helloworld'
+            bat "\"${env.Nuget_Path}\" restore 1-hello-world"
+             } else {
+            echo 'No Packages found named HelloWorld'
+     }   
+   }  
+  }
+     post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Restore Package ${currentBuild.currentResult}"
+            }
+         }
+       }
+     }
+  }
+ stage ('Build & SonarAnalysis'){
+   steps {
+      script {
+            if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
+                 withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+				
+               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
+				
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
+               
+	      } else {
+               echo 'No Build and Sonaranalysis for this project'
+        }
+      }
+    }
+    post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"SonarAnalysis&Build ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }  
+  }
+  
+  
+  
+
+   stage('Pack') {
+    steps {
+      script {
+          if ("${NUPKG_PACK}" == 'YES') {
+              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+	  } else {
+              echo 'Not packed Dotnet package'
+      }
+     }
+    }
+        post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Pack ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
+  }
+  
+  stage('Artifactory Upload') {
+   steps {
+     bat "echo ${env.Nupkg_Path}"
+      script { 
+        if ("${ARTIFACT_UPLOAD}" == 'YES') {
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          //buildInfo.name = "${BUILD_INFO_NAME}"
+          //buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
+                def uploadSpec = """{
+                    "files": [
+		    {
+                       "pattern":
+                       "target": 
+                    }
+		    ]
+                 }"""
+                  server.upload(uploadSpec) 
+                  def buildInfo2 = server.upload uploadSpec
+                  server.publishBuildInfo buildInfo2
+	   }else {
+             echo 'No Artifactory Upload'
+                  
+	 }
+      }
+    }
+    
+     
+ post {
+         always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Upload ${currentBuild.currentResult}"
+           }
+          }
+	 }
+ 
+        failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
+
+    response = jiraNewIssue issue: testIssue
+
+    echo response.successful.toString()
+    echo response.data.toString()
+                   }
+                 }
+               }
+            }
+	}
+      
+   }
+  
+  
+  stage('Artifactory Download') {
+  agent {node {label 'AnsibleSlave1'}}
+  steps {
+      script { 
+         if ("${ARTIFACT_DOWNLOAD}" == 'YES') {
+	  def buildVersion = currentBuild.number
+          def server = Artifactory.server 'Jfrog_Artifactory'
+          def buildInfo = Artifactory.newBuildInfo()
+          //buildInfo.name = "${BUILD_INFO_NAME}"
+          //buildInfo.number = "${BUILD_INFO_NUMBER}"
+          server.publishBuildInfo buildInfo
+                def downloadSpec = """{
+                    "files": [
+		    {
+		       "pattern":"Nuget-repo-test/${JIRA_STORY_ID}/",
+                       "target": "${Nupkg_Path_Slave}/"
+                    }
+		    ]
+                 }"""
+                  server.download(downloadSpec) 
+		  def buildInfo1 = server.download downloadSpec
+                  server.publishBuildInfo buildInfo1   
+          }else {
+             echo 'No Artifactory Download'
+	 }
+      }
+    }
+       post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Artifactory Download ${currentBuild.currentResult}"
+                
+    
+            }
+         }
+      }
+    }
+  }
+  
+   stage('Environment Provisioning') {
+   agent {node {label 'AnsibleSlave1'}}
+       steps {
+        script {
+         if ("${ENVIRONMENT_PROVISION}" == 'YES') {
+          sh """
+             echo " Provisioning the environment with Terraform Script"
+	     chmod 777 /var/lib/jenkins/workspace/*
+	     cd /var/lib/jenkins/workspace/jfrogtest/vm-simple-linux-managed-disk
+	     terraform init
+	     terraform plan -lock=false
+	  """
+	}else {
+           echo 'Environment not provisioned'
+       }                    
+    }
+ }
+ 
+     post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Environment Provision ${currentBuild.currentResult}"
+                
+            }
+          }
+        }
+       }
+     }
+     
+    stage('Deploy') {
+    agent {node {label 'AnsibleSlave1'}}
+    steps {
+     script {
+       if ("${DEPLOY_STG}" == 'YES') {
+         sh """
+         echo " Deploying To Server Through Ansible"
+         cd  /var/lib/jenkins/workspace/jfrogtest
+         ansible-playbook -c local -i "localhost," sample_playbook.yml -vvv
+         """
+       }else {
+        echo 'Deployment not happened'
+         }                    
+       }
+     }
+   }
+ }
+  post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy ${currentBuild.currentResult}"
+                
+            }
+         }
+      }
+    }
+  }
+  
+  
+
+  
+  
+   
+    
