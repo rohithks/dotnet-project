@@ -23,7 +23,7 @@
    steps {
      bat "echo ${APP_NAME}"
       script {
-            if ("${APP_NAME}" == 'HelloWorld') {
+            if ("${APP_NAME}" == 'JENKINS-TEST1') {
             echo 'Restoring the packages for Helloworld'
             bat "\"${env.Nuget_Path}\" restore 1-hello-world"
              } else {
@@ -48,7 +48,7 @@
       script {
             if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
                  withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
-               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"jENKINSTEST\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
 				
                bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
 				
@@ -81,7 +81,7 @@
     steps {
       script {
           if ("${NUPKG_PACK}" == 'YES') {
-              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+              bat "\"${env.Nuget_Path}\" pack JENKINS-TEST1"
 	  } else {
               echo 'Not packed Dotnet package'
       }
