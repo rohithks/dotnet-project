@@ -153,7 +153,7 @@
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
-			       jiraAssignIssue idOrKey: 'DEV-1', site: 'https://rohithsoman.atlassian.net', userName: 'Mahesh Gogineni',]
+			       assignee: [user name: 'Mahesh Gogineni']
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
