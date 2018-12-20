@@ -473,18 +473,17 @@
     //Selenium testing
      
     stage('Selenium Testing') {
-    steps {
+     steps {
+     bat "echo Selenium Testing"
      script {
        if ("${SELENIUM_TEST}" == 'YES') {
-         sh """
-         echo " Testing"
-         
-         """
-       }else {
-        echo 'Deployment not happened'
-         }                    
-       }
-     }
+         bat "echo Selenium Testing"
+           
+        } else {
+        echo 'No Packages found named HelloWorld'
+     }   
+   }  
+  }
    
  post {
          always {
