@@ -472,19 +472,13 @@
        
     //Selenium testing
      
-    stage('Selenium Testing') {
-     steps {
-     bat "echo Selenium Testing"
-     script {
-       if ("${SELENIUM_TEST}" == 'YES') {
-         bat "echo Selenium Testing"
-           
-        } else {
-        echo 'No Packages found named HelloWorld'
-     }   
-   }  
-  }
-  }
+  stage('Selenium Test') {
+  steps {
+    bat "echo selenium testing"
+    }
+   }
+   }
+   }
   
   
   
