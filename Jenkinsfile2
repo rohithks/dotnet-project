@@ -74,6 +74,21 @@
     }  
   }
   
+   stage('NUnit Test') {
+   steps {
+     script {
+          if ("${NUNIT_TEST}" == 'YES') {
+            bat "echo ${env.NUnit3_Path}}"
+	    bat "\"${env.NUnit3_Path}\\nunit-agent-x86.exe\" JENKINS-TEST1\\bin\1-hello-world.dll -- /xml=nunit-result.xml ;format=nunit3"
+	      
+          } else {
+            echo 'No NUnit Test'
+     }   
+   }  
+  }
+  }
+  
+  
   
   
 
