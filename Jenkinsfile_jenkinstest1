@@ -1,4 +1,4 @@
-pipeline {
+ pipeline {
   agent {node {label 'master'}}
   environment {
   dotnet = "${tool 'MSBuild15_Path'}"
@@ -23,9 +23,9 @@ pipeline {
    steps {
      bat "echo ${APP_NAME}"
       script {
-            if ("${APP_NAME}" == 'HelloWorld') {
-            echo 'Restoring the packages for Helloworld'
-            bat "\"${env.Nuget_Path}\" restore 1-hello-world"
+            if ("${APP_NAME}" == 'JENKINS-TEST1') {
+            echo 'Restoring the packages for JENKINS-TEST1'
+            bat "\"${env.Nuget_Path}\" restore JENKINS-TEST1"
              } else {
             echo 'No Packages found named HelloWorld'
      }   
@@ -48,9 +48,9 @@ pipeline {
       script {
             if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
                  withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
-               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"JENKINSTEST\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
 				
-               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
+               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" JENKINS-TEST1\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
 				
                bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
                
@@ -74,6 +74,22 @@ pipeline {
     }  
   }
   
+   stage('NUnit Test') {
+   steps {
+     script {
+          if ("${NUNIT_TEST}" == 'YES') {
+            bat "echo ${env.NUnit3_Path}}"
+	    bat "\"${env.NUnit3_Path}\\nunit3-console.exe\" JENKINS-TEST1\\bin\\1-hello-world.dll --result=TestR.xml;format=nunit3"
+	    step([$class: 'NUnitPublisher', testResultsPattern: 'TestR.xml', debug: false, 
+                 keepJUnitReports: true, skipJUnitArchiver:false, failIfNoResults: true]) 
+          } else {
+            echo 'No NUnit Test'
+     }   
+   }  
+  }
+  }
+  
+  
   
   
 
@@ -81,7 +97,7 @@ pipeline {
     steps {
       script {
           if ("${NUPKG_PACK}" == 'YES') {
-              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
+              bat "\"${env.Nuget_Path}\" pack JENKINS-TEST1"
 	  } else {
               echo 'Not packed Dotnet package'
       }
@@ -153,7 +169,6 @@ pipeline {
                                project: [id: '10000'],
                                summary: 'New JIRA Created from Jenkins.',
                                description: 'New JIRA Created from Jenkins.',
-			       assignee: [name: 'mahesh.gogineni'],
 			       //customfield_1000: 'customValue',
                                // id or name must present for issueType.
                                issuetype: [id: '10004']]]
@@ -276,3 +291,9 @@ pipeline {
     }
   }
   
+  
+
+  
+  
+   
+   
