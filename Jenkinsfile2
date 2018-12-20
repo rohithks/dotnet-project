@@ -24,8 +24,8 @@
      bat "echo ${APP_NAME}"
       script {
             if ("${APP_NAME}" == 'JENKINS-TEST1') {
-            echo 'Restoring the packages for Helloworld'
-            bat "\"${env.Nuget_Path}\" restore 1-hello-world"
+            echo 'Restoring the packages for JENKINS-TEST1'
+            bat "\"${env.Nuget_Path}\" restore JENKINS-TEST1"
              } else {
             echo 'No Packages found named HelloWorld'
      }   
