@@ -79,7 +79,7 @@
      script {
           if ("${NUNIT_TEST}" == 'YES') {
             bat "echo ${env.NUnit3_Path}}"
-	    bat "\"${env.NUnit3_Path}\\nunit3-console.exe\" JENKINS-TEST1\\1-hello-world.dll "
+	    bat "\"${env.NUnit3_Path}\\nunit3-console.exe\" JENKINS-TEST1\\1-hello-world.sln "
 	      
           } else {
             echo 'No NUnit Test'
