@@ -470,13 +470,7 @@
 	  }
        }
        
-    //Selenium testing
-     
-  stage('Selenium Test') {
-  steps {
-    bat "echo selenium testing"
-    }
-   }
+
    
    
   
