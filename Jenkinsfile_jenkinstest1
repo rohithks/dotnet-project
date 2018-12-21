@@ -243,8 +243,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":
-                       "target":
+                       "pattern":"${env.Nupkg_Path_Upload}/jenkins-test1.0.0.nupkg",
+                       "target":"Nuget-repo-test/${JIRA_STORY_ID}/"
 		  
                     }
 		    ]
