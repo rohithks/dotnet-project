@@ -232,7 +232,7 @@
   stage('Artifactory Upload') {
    steps {
      bat "echo ${env.Nupkg_Path_Upload}"
-     bat "xcopy 'C:\\Program Files (x86)\\Jenkins\workspace\\JENKINS-TEST1\\*.nupkg' D:"
+     bat "xcopy 'C:\\Program Files (x86)\\Jenkins\\workspace\\JENKINS-TEST1\\*.nupkg' D:"
       script { 
         if ("${ARTIFACT_UPLOAD}" == 'YES') {
 	  def buildVersion = currentBuild.number
