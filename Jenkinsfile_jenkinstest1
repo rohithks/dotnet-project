@@ -5,6 +5,7 @@
   
   }
   stages {
+  
    stage('Checkout') {
     steps {
      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
@@ -468,11 +469,58 @@
                  }
                }
             }
-	
- 
+	 }
+      }
+
+ stage('Selenium Testing') {
+    steps {
+      script {
+          if ("${SELENIUM_TEST}" == 'YES') {
+              bat "echo selenium tseting"
+	  } else {
+              echo 'No testing'
+      }
+     }
+    }
+     post {
+                always {
+                    script { 
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Packing ${currentBuild.currentResult}"
+            }
          }
        }
+ 
+     failure {
+           script { 
+              if ( "${currentBuild.currentResult}" == 'FAILURE') {
+                withEnv(['JIRA_SITE=JIRA']) {
+                def serverInfo = jiraGetServerInfo()
+                echo serverInfo.data.toString()
+                def testIssue = [fields: [ // id or key must present for project.
+                               project: [id: '10000'],
+                               summary: 'New JIRA Created from Jenkins.',
+                               description: 'New JIRA Created from Jenkins.',
+			       assignee: [name:"${SEL_ASSIGNEE}"], 
+			       //customfield_1000: 'customValue',
+                               // id or name must present for issueType.
+                               issuetype: [id: '10004']]]
 
+          response = jiraNewIssue issue: testIssue
+          echo response.successful.toString()
+          echo response.data.toString()
+                  
+		   }
+                 }
+               }
+            }
+          }
+       }
+       
+       }
+       }
    
    
   
