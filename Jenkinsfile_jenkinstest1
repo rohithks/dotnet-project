@@ -231,7 +231,7 @@
   
   stage('Artifactory Upload') {
    steps {
-     bat "echo ${env.Nupkg_Path}"
+     bat "echo ${env.Nupkg_Path_Upload}"
      bat "xcopy '${Nupkg_Copy_Location}\*.nupkg' ${Nupkg_Dest_Location}"
       script { 
         if ("${ARTIFACT_UPLOAD}" == 'YES') {
