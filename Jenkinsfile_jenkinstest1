@@ -369,7 +369,7 @@
          if ("${ENVIRONMENT_PROVISION}" == 'YES') {
           sh """
              echo " Provisioning the environment with Terraform Script"
-	     chmod 777 /var/lib/jenkins/workspace/*
+	     chmod 777 ${TARA_SCRIPT_LOCATION}
 	     cd "${TARA_SCRIPT_LOCATION}"
 	     terraform init
 	     terraform plan -lock=false
