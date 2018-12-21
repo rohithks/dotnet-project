@@ -468,8 +468,7 @@
                  }
                }
             }
-	  }
-       }
+	
        
    stage('Selenium Testing') {
    steps {
@@ -518,8 +517,8 @@
             }
           }
        }
-    
-       
+         }
+       }
 
    
    
