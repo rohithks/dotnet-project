@@ -180,7 +180,7 @@
        
   // Packing the Dotnet net project build to .Nupkg 
   
-   stage('Pack') {
+   stage('Package') {
     steps {
       script {
           if ("${NUPKG_PACK}" == 'YES') {
@@ -196,7 +196,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Packing ${currentBuild.currentResult}"
+                jiraAddComment idOrKey:"${JIRA_STORY_ID}", comment:"Package ${currentBuild.currentResult}"
             }
          }
        }
@@ -418,7 +418,7 @@
        
     //Deploying Artifact to the server
      
-    stage('Deploy') {
+    stage('Deployment') {
     agent {node {label 'AnsibleSlave1'}}
     steps {
      script {
@@ -440,7 +440,7 @@
                 withEnv(['JIRA_SITE=JIRA']) {
                 def serverInfo = jiraGetServerInfo()
                 echo serverInfo.data.toString()
-                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deploy  ${currentBuild.currentResult}"
+                jiraAddComment idOrKey: "${JIRA_STORY_ID}", comment:"Deployment  ${currentBuild.currentResult}"
            }
           }
 	 }
