@@ -132,7 +132,7 @@
    steps {
      script {
           if ("${NUNIT_TEST}" == 'YES') {
-            bat "echo ${env.NUnit3_Path}}"
+            bat "echo ${env.NUnit3_Path}"
 	    bat "\"${env.NUnit3_Path}\\nunit3-console.exe\" JENKINS-TEST1\\bin\\1-hello-world.dll --result=TestR.xml;format=nunit3"
 	    step([$class: 'NUnitPublisher', testResultsPattern: 'TestR.xml', debug: false, 
                  keepJUnitReports: true, skipJUnitArchiver:false, failIfNoResults: true]) 
