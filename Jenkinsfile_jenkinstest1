@@ -243,8 +243,8 @@
                 def uploadSpec = """{
                     "files": [
 		    {
-                       "pattern":
-                       "target": 
+                       "pattern": 
+                       "target": "Nuget-repo-test/${JIRA_STORY_ID}/"
 		  
                     }
 		    ]
