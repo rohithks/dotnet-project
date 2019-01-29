@@ -19,40 +19,18 @@
    steps {
      bat "echo ${APP_NAME}"
       script {
+      
+      def messageJson = new JSONObject()
+                 messageJson.putAll([
+                short_description: 'My change',
+                description: 'My longer description of the change'
+         ])
+            def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servicenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23', body: messageJson.toString()], vaultConfiguration: [url: 'https://dev71406.service-now.com/', path: 'secret/for/service_now/']
             if ("${APP_NAME}" == 'HelloWorld') {
             echo 'Restoring the packages for Helloworld'
             bat "\"${env.Nuget_Path}\" restore 1-hello-world"
              } else {
             echo 'No Packages for helloworld'
-     }   
-   }  
-  }
- }	
-   stage ('Build & SonarAnalysis'){
-   steps {
-      script {
-            if ( "${MS_BUILD}" == 'YES'  &&  "${SONAR_ANALYSIS}" == 'YES' ) {  
-                 withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
-               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"HelloWorld\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
-				
-               bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" 1-hello-world\\1-hello-world.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=\"release\""
-				
-               bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}" }
-               
-	      } else {
-               echo 'No Build and Sonaranalysis'
-        }
-      }
-    }
-   }
-  
-   stage('Pack') {
-   steps {
-      script {
-          if ("${NUPKG_PACK}" == 'YES') {
-              bat "\"${env.Nuget_Path}\" pack 1-hello-world"
-	  } else {
-              echo 'Not packing anything'
     }
    }
    }
