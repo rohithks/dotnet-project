@@ -30,6 +30,7 @@ import groovy.json.JsonSlurper
            always {
                  script { 
                      serviceNow_createChange()
+		     def slurper = new groovy.json.JsonSlurper()
 		     def json = json.JsonSlurperClassic
                      def messageJson = new JSONObject()
                           messageJson.putAll
