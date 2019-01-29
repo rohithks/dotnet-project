@@ -1,5 +1,9 @@
  pipeline {
  agent {node {label 'master'}}
+ 
+ WorkflowScript: 30: unable to resolve class JSONObject 
+ @ line 30, column 40.
+                        def messageJson = new JSONObject()
  stages {
   stage('Checkout') {
    steps {
