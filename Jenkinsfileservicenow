@@ -1,6 +1,6 @@
-
-pipeline {
 import groovy.json.JsonSlurper
+pipeline {
+
  agent {node {label 'master'}}
 
  stages {
