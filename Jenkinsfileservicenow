@@ -1,5 +1,7 @@
  pipeline {
  agent {node {label 'master'}}
+ @Library('testlibrary@') import groovy.json.JsonSlurper
+ def jsonSlurper = new JsonSlurper()
  stages {
   stage('Checkout') {
    steps {
