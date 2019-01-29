@@ -1,9 +1,6 @@
  pipeline {
  agent {node {label 'master'}}
 
- environment {
-  dotnet = "${tool 'MSBuild15_Path'}"
- }
  
  stages {
   stage('Checkout') {
