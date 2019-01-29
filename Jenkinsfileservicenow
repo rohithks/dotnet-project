@@ -31,6 +31,7 @@
            always {
                  script { 
                      serviceNow_createChange()
+		     def json = json.JsonSlurperClassic
                      def messageJson = new JSONObject()
                           messageJson.putAll
 			  ([
