@@ -17,7 +17,7 @@
 	 
    stage('Restore Packages') {
    steps {
-     bat "\"${env.Nuget_Path}\" restore 1-hello-world
+     bat "\"${env.Nuget_Path}\" restore 1-hello-world"
            
     }
    }
