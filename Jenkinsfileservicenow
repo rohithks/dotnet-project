@@ -17,7 +17,7 @@
 	 
    stage('Restore Packages') {
    steps {
-     bat "\"${env.Nuget_Path}\" restore JENKINS-TEST1
+     bat "\"${env.Nuget_Path}\" restore 1-hello-world
            
     }
    }
