@@ -1,6 +1,13 @@
  pipeline {
  agent {node {label 'master'}}
  
+ import groovy.json.JsonSlurperClassic 
+
+
+@NonCPS
+def jsonParse(def json) {
+    new groovy.json.JsonSlurperClassic().parseText(json)
+ 
  stages {
   stage('Checkout') {
    steps {
@@ -21,9 +28,9 @@
             
             echo 'Restoring the packages for JENKINS-TEST1'
             bat "\"${env.Nuget_Path}\" restore JENKINS-TEST1"
-             }  
+      }  
    }  
-  }
+ 
    post {
            always {
                  script { 
@@ -41,3 +48,4 @@
           }
          }
        }
+      }
