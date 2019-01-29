@@ -1,10 +1,6 @@
- pipeline {
+import groovy.json.JsonSlurper
+pipeline {
  agent {node {label 'master'}}
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONString;
 
  stages {
   stage('Checkout') {
@@ -40,8 +36,7 @@ import org.json.JSONString;
                           short_description: 'My change',
                           description: 'My longer description of the change'
                            ])
-   def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23', body: messageJson.toString()], vaultConfiguration: [url: 'https://vault.example.com:8200', path: 'secret/for/service_no'
-       ] 
+   def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23', body: messageJson.toString()]      ] 
              }
             }
           }
