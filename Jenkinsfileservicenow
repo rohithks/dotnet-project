@@ -1,6 +1,6 @@
  pipeline {
  agent {node {label 'master'}}
-
+ import groovy.json.JsonSlurper
  
  stages {
   stage('Checkout') {
