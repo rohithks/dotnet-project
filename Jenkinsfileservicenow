@@ -9,7 +9,8 @@ node('master') {
 	        }
         stage('Servicenow') {
 	         script {
-	         def requestId = createChangeRequest changeRequest: request
+	         def request = ChangeRequest shortDescription:'Deploy to Test',type:'Standard',category:'Other',impact:'3 - Low',risk:'Moderate',priority:'4 - Low',ci:'AS400'
+                 createChangeRequest changeRequest: request
                   
         } 
        }
