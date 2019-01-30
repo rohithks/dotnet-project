@@ -29,10 +29,7 @@ pipeline {
            always {
                  script { 
                      serviceNow_createChange()
-		     def slurper = new groovy.json.JsonSlurper()
-		     def json = json.JsonSlurperClassic
-                     def messageJson = new JSONObject()
-                          messageJson.putAll
+		    
 			  ([
                           short_description: 'My change',
                           description: 'My longer description of the change'
