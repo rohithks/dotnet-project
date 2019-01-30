@@ -1,38 +1,23 @@
-pipeline {
-
- agent {node {label 'master'}}
-
- stages {
-  stage('Checkout') {
-   steps {
-    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
-   }
-  }
-  
-  stage('Load Properties') {
-  steps {
-    load "Jenkinstest1.properties"
-  }
-  }
-	 
-   stage('Restore Packages') {
-   steps {
-     bat "echo ${APP_NAME}"
-      script {
-           
-  
-	import org.json.*   
-	def messageJson = new JSONObject()
-        messageJson.putAll([
-                short_description: 'My change',
-                description: 'My longer description of the change'
+node('master') {
+   
+	stage('Checkout') {
+		checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '21dcef66-4390-4b26-8345-bdce1adc6a5d', url: 'https://github.com/rohithks/dotnet-project.git']]])
+		}
+				
+        stage('Loading Propertyfile') {
+	        load "Jenkinstest1.properties"
+	        }
+        stage('Servicenow') {
+	         script {
+                   def messageJson = new JSONObject()
+                     messageJson.putAll([
+                     short_description: 'My change',
+                     description: 'My longer description of the change'
         ])
    
    def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23', body: messageJson.toString()], vaultConfiguration: [url: 'https://vault.example.com:8200', path: 'secret/for/service_now/']
 
-      }  
-   }  
- }
-  }
-  }
-  
+        } 
+       }
+      }
+		
