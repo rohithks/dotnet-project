@@ -20,8 +20,8 @@ pipeline {
      bat "echo ${APP_NAME}"
       script {
            
-           erviceNow_createChange()
-		    
+        serviceNow_updateChangeItem()
+	import org.json.*   
 	def messageJson = new JSONObject()
         messageJson.putAll([
                 short_description: 'My change',
