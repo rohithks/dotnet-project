@@ -10,7 +10,7 @@ node('master') {
         stage('Servicenow') {
 	         script {
                   
-                  def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id']
+       def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id'
                   
         } 
        }
