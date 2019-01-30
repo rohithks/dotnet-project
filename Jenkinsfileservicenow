@@ -9,10 +9,7 @@ node('master') {
 	        }
         stage('Servicenow') {
 	         script {
-		 serviceNow_updateChangeItem()
-        def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'https://dev71406.service-now.com/'], credentialsId: 'servivenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23']
-        def request = ChangeRequest shortDescription:'Deploy to Test',type:'Standard',category:'Other',impact:'3 - Low',risk:'Moderate',priority:'4 - Low',ci:'AS400'
-        createChangeRequest changeRequest: request
+	         def requestId = createChangeRequest changeRequest: request
                   
         } 
        }
