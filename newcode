@@ -67,3 +67,246 @@ node('master') {
 			//		packageVersion = releaseVersion
 			//	}
 			//}
+			//
+			//stage('MSBuild Code Analysis') {
+			//	if("${RUN_SONARQUBE}" == 'true') {
+			//		withCredentials([string(credentialsId: 'Sonarqube_Token', variable: 'SonarqubeToken')]) {					
+			//			bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" begin /k:\"GDAP_ADF_Custom_Activities\" /d:sonar.host.url=" + env.SonarQube_URL + " /d:sonar.login=${SonarqubeToken}"
+			//		
+			//			bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" ADF_Custom_Activities\\ADF_Custom_Activities.sln /t:Rebuild /p:platform=\"any cpu\" /p:configuration=\"debug\""
+			//		
+			//			bat "\"${tool 'SonarQube_MSBuild'}\\SonarScanner.MSBuild.exe\" end /d:sonar.login=${SonarqubeToken}"
+			//		}
+			//	}
+			//}
+			//
+			//stage('SonarQube analysis') {
+			//	if("${RUN_SONARQUBE}" == 'true') {
+			//		withSonarQubeEnv('GDAP_SonarQube') {
+			//			bat "\"${tool 'SonarQube'}\\sonar-scanner.bat\" -Dsonar.projectKey=SnowFlake -Dsonar.sources=${env.WORKSPACE}/ADF_Objects,${env.WORKSPACE}/Snowflake_Objects,${env.WORKSPACE}/Terraform"
+			//		}
+			//	}
+			//}
+			//
+			//stage('Build and Package') {
+			//	//build
+			//	bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" ADF_Custom_Activities\\ADF_Custom_Activities.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=release"
+			//	bat "\"${tool 'MSBuild15_Path'}\\msbuild.exe\" ADF_Monitoring\\ADF_Monitoring.sln /t:Rebuild /p:DeployOnBuild=true /p:PackageAsSingleFile=true /p:platform=\"any cpu\" /p:configuration=release"
+			//	
+			//	//removing any pre-existing packages
+			//	bat "del *.nupkg"
+			//	bat "del *.zip"
+			//	
+			//	//Packaging
+			//	bat "\"${env.Nuget_Path}\" pack ADF_Custom_Activities\\Snowflake_Stored_Procedure\\Snowflake_Stored_Procedure.nuspec -Version " + packageVersion
+			//	bat "\"${env.Nuget_Path}\" pack ADF_Monitoring\\ADF_Monitoring\\ADF_Pipeline_Error_Notifications.nuspec -Version " + packageVersion
+			//	zip zipFile: 'ADF_Objects.' + packageVersion + '.zip', archive: false, dir: 'ADF_Objects'
+			//	zip zipFile: 'Terraform.' + packageVersion + '.zip', archive: false, dir: 'Terraform'
+			//	zip zipFile: 'Snowflake_Objects.' + packageVersion + '.zip', archive: false, dir: 'Snowflake_Objects'
+			//}
+			//
+			//stage('Publish Artifacts') {
+			//	if(DEPLOY_ON == 'STG' && releaseVersion == '') {
+			//		def buildInfo = Artifactory.newBuildInfo()
+			//		buildInfo.env.capture=true
+			//		buildInfo.env.collect()
+			//		buildInfo.number = packageVersion
+            //
+			//		def uploadSpec = """{
+			//			"files": [
+			//				{
+			//					"pattern": "Snowflake_Stored_Procedure.*.nupkg",
+			//					"target": "${repoName.toLowerCase()}/Snowflake_Stored_Procedure/"
+			//				},
+			//				{
+			//					"pattern": "ADF_Pipeline_Error_Notifications.*.nupkg",
+			//					"target": "${repoName.toLowerCase()}/ADF_Pipeline_Error_Notifications/"
+			//				},
+			//				{
+			//					"pattern": "ADF_Objects.*.zip",
+			//					"target": "${repoName.toLowerCase()}/ADF_Objects/"
+			//				},
+			//				{
+			//					"pattern": "Terraform.*.zip",
+			//					"target": "${repoName.toLowerCase()}/Terraform/"
+			//				},
+			//				{
+			//					"pattern": "Snowflake_Objects.*.zip",
+			//					"target": "${repoName.toLowerCase()}/Snowflake_Objects/"
+			//				}
+			//			]
+			//		}"""
+            //
+			//		print "Publish the artifacts"
+			//		buildInfo = server.upload spec: uploadSpec
+            //
+			//		// Publish the build information to Artifactory
+			//		server.publishBuildInfo buildInfo
+			//	}
+			//}
+			//
+			//stage('Tag the Repo') {
+			//	try {
+			//		bat "git config user.email \"lll-jenkins-gdap@protonmail.com\""
+			//		bat "git config user.name \"lll-jenkins-gdap\""
+			//		bat "git tag -a v" + packageVersion + " -m \"" + packageVersion + "\""
+			//		withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'GitHub_Token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+			//			bat "git config credential.username ${env.GIT_USERNAME}"
+			//			bat "git config credential.helper ${GIT_PASSWORD}"
+			//			bat "git push https://github.com/Lululemon/${repoName}.git --tags"
+			//		}
+			//	}
+			//	finally {
+			//		bat "git config --unset credential.username"
+			//		bat "git config --unset credential.helper"
+			//	}
+			//}
+			//
+			//stage('Download artifacts') {
+			//	if("${AUTO_ENVIRONMENT_AND_DEPLOYMENT}" == 'true') {
+			//		node('cdn-bidopsconf1') {
+			//			ws("${env.JENKINS_ANSIBLE_WORKSPACE}/${repoName}") {
+			//				//deleting old packages
+			//				sh "rm -rf -- ${env.WORKSPACE}/*"
+			//				
+			//				//Nuget artifacts
+			//				def nugetArtifacts = "${NUGET_ARTIFACTS}".split(',')
+			//				for (ii = 0; ii < nugetArtifacts.size(); ii++){
+			//					ansiblePlaybook(
+			//						playbook: "${env.ANSIBLE_WORKSPACE}${ANSIBLE_GDAP_ARTIFACTORY_PLAYBOOK}",
+			//						inventory: "${env.ANSIBLE_WORKSPACE}hosts",
+			//						vaultCredentialsId: 'ANSIBLE_VAULT_TOKEN',
+			//						extras: '-vvv',
+			//						extraVars: [
+			//							artifacts_dest_path: "${env.WORKSPACE}",
+			//							artifact_name: nugetArtifacts[ii],
+			//							package_version: packageVersion,
+			//							artifact_extension: "nupkg",
+			//							artifact_ver: packageVersion
+			//						]
+			//					)
+			//				}
+			//				
+			//				//Zip artifacts
+			//				def zipArtifacts = "${ZIP_ARTIFACTS}".split(',')
+			//				for (ii = 0; ii < zipArtifacts.size(); ii++){
+			//					sh "mkdir -p ${env.WORKSPACE}/" + zipArtifacts[ii]
+			//					ansiblePlaybook(
+			//						playbook: "${env.ANSIBLE_WORKSPACE}${ANSIBLE_GDAP_ARTIFACTORY_PLAYBOOK}",
+			//						inventory: "${env.ANSIBLE_WORKSPACE}hosts",
+			//						vaultCredentialsId: 'ANSIBLE_VAULT_TOKEN',
+			//						extras: '-vvv',
+			//						extraVars: [
+			//							artifacts_dest_path: "${env.WORKSPACE}",
+			//							artifact_name: zipArtifacts[ii],
+			//							package_version: packageVersion,
+			//							artifact_extension: "zip",
+			//							artifact_ver: packageVersion
+			//						]
+			//					)
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+			//
+			//stage('Configuration keys replacement') {
+			//	if("${AUTO_ENVIRONMENT_AND_DEPLOYMENT}" == 'true') {
+			//		node('cdn-bidopsconf1') {
+			//			ws("${env.JENKINS_ANSIBLE_WORKSPACE}/${repoName}") {
+			//				def configFiles = "${CONFIG_FILES}".split(',')
+			//				for (ii = 0; ii < configFiles.size(); ii++){
+			//					sh "cp --parents " + configFiles[ii] + " ${env.ANSIBLE_WORKSPACE}${repoName}/ConfigKeys/templates"
+			//					def configPath = sh (script: "dirname " + configFiles[ii], returnStdout: true).trim()
+			//					def configFileName = sh (script: "basename " + configFiles[ii], returnStdout: true).trim()
+			//					def actualFileName = sh (script: "basename -s .j2 " + configFileName, returnStdout: true).trim()
+			//					ansiblePlaybook(
+			//						playbook: "${env.ANSIBLE_WORKSPACE}${repoName}/${ANSIBLE_CONFIG_PLAYBOOK}",
+			//						inventory: "${env.ANSIBLE_WORKSPACE}hosts",
+			//						vaultCredentialsId: 'ANSIBLE_VAULT_TOKEN',
+			//						extraVars: [
+			//							env: DEPLOY_ON,
+			//							var_path: configPath,
+			//							actual_file_name: "${actualFileName}",
+			//							config_source: configFiles[ii],
+			//							config_target: "${env.WORKSPACE}/${configPath}/${actualFileName}",
+			//							resource_group_name: resourceGroupName,
+			//							function_app_name: functionAppName,
+			//							adf_sa_name: adfSaName,
+			//							sfc_stage_sa_name: sfcStageSaName,
+			//							Data_Factory_Name: adf
+			//						]
+			//					)
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+			//
+			//stage('Environment provisioning') {
+			//	if("${AUTO_ENVIRONMENT_AND_DEPLOYMENT}" == 'true') {
+			//		node('cdn-bidopsconf1') {
+			//			ws("${env.JENKINS_ANSIBLE_WORKSPACE}/${repoName}") {
+			//				ansiblePlaybook(
+			//					playbook: "${env.ANSIBLE_WORKSPACE}${repoName}/${ANSIBLE_ENV_PLAYBOOK}",
+			//					inventory: "${env.ANSIBLE_WORKSPACE}hosts",
+			//					vaultCredentialsId: 'ANSIBLE_VAULT_TOKEN',
+			//					extras: '-vvv',
+			//					extraVars: [
+			//						env: DEPLOY_ON,
+			//						tf_scripts_path: "${env.WORKSPACE}/Terraform",
+			//						tf_force_init: "${TERRAFORM_FORCE_INIT}",
+			//						tf_vars_file: "${env.WORKSPACE}/Terraform/vars/" + "${DEPLOY_ON.toLowerCase()}" + ".tfvars",
+			//						tfstate_sa: "${TFSTATE_ACCOUNT}",
+			//						tfstate_container: "${TFSTATE_CONTAINER}",
+			//						tfstate_file: "${DEPLOY_ON.toLowerCase()}" + ".terraform.tfstate"
+			//					]
+			//				)
+			//			}
+			//		}
+			//	}
+			//}
+			//
+			//stage('Deployment') {
+			//	if("${AUTO_ENVIRONMENT_AND_DEPLOYMENT}" == 'true') {
+			//		node('cdn-bidopsconf1') {
+			//			ws("${env.JENKINS_ANSIBLE_WORKSPACE}/${repoName}") {
+			//				withCredentials([file(credentialsId: 'SnowFlake', variable: 'SnowFlake_config')]) {
+			//					sh "cp $SnowFlake_config ${env.WORKSPACE}/Snowflake_Objects/Migration_Script_Includes/Snowsql_Config.txt"
+			//					ansiblePlaybook(
+			//						playbook: "${env.ANSIBLE_WORKSPACE}${repoName}/${ANSIBLE_GDAP_PLAYBOOK}",
+			//						inventory: "${env.ANSIBLE_WORKSPACE}hosts",
+			//						vaultCredentialsId: 'ANSIBLE_VAULT_TOKEN',
+			//						extras: '-vvv',
+			//						extraVars: [
+			//							env: DEPLOY_ON,
+			//							adf_storage_account: adfSaName,
+			//							jen_workspace: "${env.WORKSPACE}/",
+			//							//ADF and function app
+			//							adf_files_source: "Snowflake_Stored_Procedure/content",
+			//							adf_storage_container: "${ADF_STORAGE_CONTAINER}",
+			//							resource_group_name: resourceGroupName,
+			//							function_app_name: functionAppName,
+			//							function_folder: "ADF_Pipeline_Error_Notifications",
+			//							func_files_source: "ADF_Pipeline_Error_Notifications/content/Publish/",
+			//							//ADF pipeline
+			//							adf_objects_path: "ADF_Objects/",
+			//							Data_Factory_Name: adf,
+			//							Linked_DF_Name: "${ADF_LINKED_DF_NAME}",
+			//							Linked_DF_RG: "${ADF_Linked_DF_RG}",
+			//							//Snowflake objects
+			//							snowflake_objects_source: "Snowflake_Objects",
+			//							snow_storage_container: "${SNOW_STORAGE_CONTAINER}",
+			//							snowflake_db: "${SNOWFLAKE_DB}",
+			//							snowsql_config: "${env.WORKSPACE}/Snowflake_Objects/Migration_Script_Includes/Snowsql_Config.txt",
+			//							sfcstage_sa: sfcstagesa
+			//						]
+			//					)
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+		}
+	}
+}
