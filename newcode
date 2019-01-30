@@ -1,0 +1,69 @@
+node('master') {
+    timestamps {
+		ws("${env.JENKINS_WORKSPACE}/${env.JOB_NAME}") {
+			
+			//Checking for build parameters
+			properties([parameters([choice(choices: 'STG\nQA\nPROD', description: 'The Target Environment where code is to be deployed. By default, code will be deployed on STG.', name: 'DEPLOY_ON'), string(defaultValue: '', description: 'The artifact version to be used for deployment.', name: 'DEPLOYMENT_VERSION')])])
+		
+			def server = Artifactory.server 'Artifactory'
+			def gitCommit
+			def repoUrl
+			def gitShortCommit
+			def repoName = "GDAP"
+			def releaseVersion = params.DEPLOYMENT_VERSION
+			def buildNumber = env.GDAP_MAJOR_REL_NO + '.' + env.GDAP_MINOR_REL_NO + '.' + env.GDAP_PATCH_REL_NO + '.' + env.BUILD_NUMBER
+			def resourceGroupName = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}rg"
+			def adfSaName = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}adfsa"
+			def sfcStageSaName = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}sfcstagesa"
+			def functionAppName = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}adfpipelineerrornotification"
+			def adf = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}datafactory"
+			def sfcstagesa = "${repoName.toLowerCase()}${DEPLOY_ON.toLowerCase()}sfcstagesa"
+			
+			stage('Checkout') {
+				//comment
+				//jiraComment body: 'test comment 1', issueKey: 'GDAP-1359'
+				
+				//new issue
+				withEnv(['JIRA_SITE=JIRA_Cloud']) {
+					jiraAddComment comment: 'test comment 1', idOrKey: 'GDAP-1359'
+					def testIssue = [
+						fields: [
+							project: [key: 'GDAP'],
+							summary: 'Test JIRA Created from Jenkins.',
+							description: 'Description of test JIRA Created from Jenkins.',
+							issuetype: [id: '10004']
+						]
+					]
+					
+					response = jiraNewIssue issue: testIssue
+					
+					echo response.successful.toString()
+					echo response.data.toString()
+				}
+				
+			//	if(DEPLOY_ON == 'STG' && releaseVersion == '') {
+			//		// Get the latest code from SCM
+			//		def scmVars = checkout scm
+			//		gitCommit = scmVars.GIT_COMMIT
+			//		gitShortCommit = scmVars.GIT_COMMIT[0..7]
+			//		repoUrl = scm.userRemoteConfigs[0].url
+			//	}
+			}
+
+			//stage('Pre Build Setup') {
+			//	//Loading properties
+			//	load "gdapjenkins.properties"
+			//	
+			//	if(DEPLOY_ON == 'STG' && releaseVersion == '') {
+			//		packageVersion = buildNumber + "-" + gitShortCommit
+			//		currentBuild.displayName = packageVersion
+			//		
+			//		// Restoring nuget packages
+			//		bat "\"${env.Nuget_Path}\" restore ADF_Custom_Activities"
+			//		bat "\"${env.Nuget_Path}\" restore ADF_Monitoring"
+			//	}
+			//	else {
+			//		currentBuild.displayName = buildNumber
+			//		packageVersion = releaseVersion
+			//	}
+			//}
