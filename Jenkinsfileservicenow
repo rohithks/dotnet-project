@@ -9,9 +9,9 @@ node('master') {
 	        }
         stage('Servicenow') {
 	         script {
-                  
-                  def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id', serviceNowItem: [table: 'change_request', sysId: 'adg98y29thukwfd97ihu23', body: messageJson.toString()], vaultConfiguration: [url: 'https://vault.example.com:8200', path: 'secret/for/service_now/']
-
+                  [
+                  def response = serviceNow_updateChangeItem serviceNowConfiguration: [instance: 'dev71406'], credentialsId: 'servivenow_id']
+                  ]
         } 
        }
       }
